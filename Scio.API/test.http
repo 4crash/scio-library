@@ -1,0 +1,47 @@
+### Test Scio.API Book Endpoints
+
+# Get all books
+GET http://localhost:5250/api/book HTTP/1.1
+Accept: application/json
+
+###
+
+# Search books by title
+GET http://localhost:5250/api/book/search?term=1984 HTTP/1.1
+Accept: application/json
+
+###
+
+# Search books by author
+GET http://localhost:5250/api/book/search?term=orwell HTTP/1.1
+Accept: application/json
+
+###
+
+# Add new book
+POST http://localhost:5250/api/book HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Pride and Prejudice",
+  "author": "Jane Austen",
+  "yearOfPublication": 1813,
+  "isbn": "978-0486284736",
+  "availableCopies": 4
+}
+
+###
+
+# Borrow a book (replace with actual GUID from response above)
+POST http://localhost:5250/api/book/{book-id}/borrow HTTP/1.1
+
+###
+
+# Return a book (replace with actual GUID)
+POST http://localhost:5250/api/book/{book-id}/return HTTP/1.1
+
+###
+
+# Get specific book by ID (replace with actual GUID)
+GET http://localhost:5250/api/book/{book-id} HTTP/1.1
+Accept: application/json

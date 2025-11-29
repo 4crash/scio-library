@@ -1,0 +1,34 @@
+[
+  {
+    "Id": "29b42a5b-590c-415c-b5af-9186896f5e6a",
+    "Title": "1984",
+    "Author": "George Orwell",
+    "YearOfPublication": 1949,
+    "ISBN": "978-0451524935",
+    "AvailableCopies": 12
+  },
+  {
+    "Id": "5924867c-f62f-4bc0-9b3c-e4ad9067d999",
+    "Title": "To Kill a Mockingbird",
+    "Author": "Harper Lee",
+    "YearOfPublication": 1960,
+    "ISBN": "978-0061120084",
+    "AvailableCopies": 1
+  },
+  {
+    "Id": "283420a9-0ad5-45f2-a8a7-9e99e4dc9100",
+    "Title": "The Great Gatsby",
+    "Author": "F. Scott Fitzgerald",
+    "YearOfPublication": 1925,
+    "ISBN": "978-0743273565",
+    "AvailableCopies": 7
+  },
+  {
+    "Id": "2b05b0f0-3cb0-4ff3-b8f2-7dd859fe889d",
+    "Title": "sfads",
+    "Author": "dsfds",
+    "YearOfPublication": 2025,
+    "ISBN": "sadffdf546adsfsad",
+    "AvailableCopies": 10
+  }
+]

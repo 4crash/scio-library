@@ -1,0 +1,6 @@
+@Scio.API_HostAddress = http://localhost:5250
+
+GET {{Scio.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

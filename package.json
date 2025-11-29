@@ -1,0 +1,19 @@
+{
+  "name": "blazor-merged",
+  "version": "1.0.0",
+  "description": "```\r Frontend (Blazor WebAssembly)  ←→  Backend (ASP.NET Core API)\r - Scio (port 5173/7207)              - Scio.API (port 7095)\r ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-css": "tailwindcss -i ./Scio/wwwroot/css/app.css -o ./Scio/wwwroot/css/app.min.css",
+    "watch-css": "tailwindcss -i ./Scio/wwwroot/css/app.css -o ./Scio/wwwroot/css/app.min.css --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18"
+  }
+}

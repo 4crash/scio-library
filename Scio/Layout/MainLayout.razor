@@ -1,0 +1,28 @@
+﻿@inherits LayoutComponentBase
+<div class="app-shell">
+  
+
+    <div class="main-area">
+        <header class="logo-strip" aria-label="SCIO logo banner">
+            <img src="images/scio-logo.svg" alt="SCIO" class="scio-logo-img" />
+              
+              <div class="hero-badge"> · Library · </div>
+               <NavMenu />
+               <div class="hero-actions float-right">
+                <div>
+              
+            </div>
+                <button class="btn btn-ghost">Learn more</button>
+                <button class="btn btn-primary">Login</button>
+            </div>
+            
+        </header>
+     
+
+        <main class="content-area">
+            <article class="content">
+                @Body
+            </article>
+        </main>
+    </div>
+</div>
