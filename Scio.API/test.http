@@ -27,7 +27,7 @@ Content-Type: application/json
   "author": "Jane Austen",
   "yearOfPublication": 1813,
   "isbn": "978-0486284736",
-  "availableCopies": 4
+  "totalCopies": 4
 }
 
 ###

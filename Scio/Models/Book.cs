@@ -7,6 +7,8 @@ namespace Scio.Models
         public string Author { get; set; } = string.Empty;
         public int YearOfPublication { get; set; }
         public string ISBN { get; set; } = string.Empty;
+        public int TotalCopies { get; set; }
         public int AvailableCopies { get; set; }
+        public List<BorrowRecord> BorrowHistory { get; set; } = new();
     }
 }

@@ -37,6 +37,12 @@
         <span class="dismiss">🗙</span>
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { preventScroll, allowScroll } = await import('./js/modal-scroll.js');
+            window.modalScroll = { preventScroll, allowScroll };
+        });
+    </script>
 </body>
 
 </html>

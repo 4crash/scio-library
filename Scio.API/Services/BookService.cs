@@ -9,8 +9,10 @@ namespace Scio.API.Services
         Task<Book?> GetBookByIdAsync(Guid id);
         Task<List<Book>> SearchBooksAsync(string searchTerm);
         Task<Book> AddBookAsync(Book book);
-        Task<bool> BorrowBookAsync(Guid id);
+        Task<bool> BorrowBookAsync(Guid id, string userName);
         Task<bool> ReturnBookAsync(Guid id);
+        Task<bool> ReturnBorrowRecordAsync(Guid borrowRecordId);
+        Task<List<BorrowedBookInfo>> GetBorrowedBooksAsync();
     }
 
     public class BookService : IBookService
@@ -22,6 +24,12 @@ namespace Scio.API.Services
         {
             // Load from file on initialization
             _books = LoadBooksFromFile().Result;
+
+            // Recalculate available copies based on borrow history
+            foreach (var book in _books)
+            {
+                book.AvailableCopies = book.TotalCopies - book.BorrowHistory.Count(b => b.ReturnDate == null);
+            }
 
             // If file doesn't exist or is empty, initialize with default data
             if (_books.Count == 0)
@@ -35,7 +43,9 @@ namespace Scio.API.Services
                         Author = "George Orwell",
                         YearOfPublication = 1949,
                         ISBN = "978-0451524935",
-                        AvailableCopies = 5
+                        TotalCopies = 5,
+                        AvailableCopies = 5,
+                        BorrowHistory = new List<BorrowRecord>()
                     },
                     new Book
                     {
@@ -44,7 +54,9 @@ namespace Scio.API.Services
                         Author = "Harper Lee",
                         YearOfPublication = 1960,
                         ISBN = "978-0061120084",
-                        AvailableCopies = 3
+                        TotalCopies = 3,
+                        AvailableCopies = 3,
+                        BorrowHistory = new List<BorrowRecord>()
                     },
                     new Book
                     {
@@ -53,7 +65,9 @@ namespace Scio.API.Services
                         Author = "F. Scott Fitzgerald",
                         YearOfPublication = 1925,
                         ISBN = "978-0743273565",
-                        AvailableCopies = 7
+                        TotalCopies = 7,
+                        AvailableCopies = 7,
+                        BorrowHistory = new List<BorrowRecord>()
                     }
                 };
                 SaveBooksToFile().Wait();
@@ -94,13 +108,25 @@ namespace Scio.API.Services
             return book;
         }
 
-        public async Task<bool> BorrowBookAsync(Guid id)
+        public async Task<bool> BorrowBookAsync(Guid id, string userName)
         {
             var book = _books.FirstOrDefault(b => b.Id == id);
             if (book == null || book.AvailableCopies <= 0)
                 return false;
 
-            book.AvailableCopies--;
+            // Add borrow record
+            var borrowRecord = new BorrowRecord
+            {
+                Id = Guid.NewGuid(),
+                User = userName,
+                BorrowDate = DateTime.UtcNow,
+                ReturnDate = null
+            };
+            book.BorrowHistory.Add(borrowRecord);
+
+            // Update available copies
+            book.AvailableCopies = book.TotalCopies - book.BorrowHistory.Count(b => b.ReturnDate == null);
+
             await SaveBooksToFile();
             return true;
         }
@@ -111,9 +137,62 @@ namespace Scio.API.Services
             if (book == null)
                 return false;
 
-            book.AvailableCopies++;
+            // Find the most recent unreturned borrow record
+            var borrowRecord = book.BorrowHistory.LastOrDefault(b => b.ReturnDate == null);
+            if (borrowRecord == null)
+                return false; // No outstanding borrow
+
+            borrowRecord.ReturnDate = DateTime.UtcNow;
+
+            // Update available copies
+            book.AvailableCopies = book.TotalCopies - book.BorrowHistory.Count(b => b.ReturnDate == null);
+
             await SaveBooksToFile();
             return true;
+        }
+
+        public async Task<bool> ReturnBorrowRecordAsync(Guid borrowRecordId)
+        {
+            // Find the borrow record across all books
+            foreach (var book in _books)
+            {
+                var borrowRecord = book.BorrowHistory.FirstOrDefault(b => b.Id == borrowRecordId && b.ReturnDate == null);
+                if (borrowRecord != null)
+                {
+                    borrowRecord.ReturnDate = DateTime.UtcNow;
+
+                    // Update available copies
+                    book.AvailableCopies = book.TotalCopies - book.BorrowHistory.Count(b => b.ReturnDate == null);
+
+                    await SaveBooksToFile();
+                    return true;
+                }
+            }
+            return false; // Borrow record not found or already returned
+        }
+
+        public Task<List<BorrowedBookInfo>> GetBorrowedBooksAsync()
+        {
+            var borrowedBooks = new List<BorrowedBookInfo>();
+
+            foreach (var book in _books)
+            {
+                foreach (var borrow in book.BorrowHistory)
+                {
+                    borrowedBooks.Add(new BorrowedBookInfo
+                    {
+                        BookId = book.Id,
+                        BookTitle = book.Title,
+                        BookAuthor = book.Author,
+                        BorrowRecordId = borrow.Id,
+                        UserName = borrow.User,
+                        BorrowDate = borrow.BorrowDate,
+                        ReturnDate = borrow.ReturnDate
+                    });
+                }
+            }
+
+            return Task.FromResult(borrowedBooks);
         }
 
         private async Task<List<Book>> LoadBooksFromFile()

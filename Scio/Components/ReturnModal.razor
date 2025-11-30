@@ -1,0 +1,140 @@
+@using Scio.Models
+@inject IJSRuntime JSRuntime
+
+@if (IsOpen)
+{
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-96 overflow-y-auto">
+            <h3 class="text-2xl font-bold text-scio-gray-dark mb-4">
+                @if (FilterBookId == Guid.Empty)
+                {
+                    <text>Return a Book</text>
+                }
+                else
+                {
+                    <text>Return: @FilteredBooks?.FirstOrDefault()?.BookTitle</text>
+                }
+            </h3>
+            
+            @if (FilteredBooks == null || !FilteredBooks.Any())
+            {
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800">
+                    <p>No borrowed copies of this book.</p>
+                </div>
+            }
+            else
+            {
+                <div class="space-y-3">
+                    @foreach (var borrowedBook in FilteredBooks)
+                    {
+                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 cursor-pointer transition">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    @if (FilterBookId == Guid.Empty)
+                                    {
+                                        <h5 class="font-semibold text-gray-900">@borrowedBook.BookTitle</h5>
+                                        <p class="text-sm text-gray-600">by @borrowedBook.BookAuthor</p>
+                                    }
+                                    <p class="text-sm text-gray-600">Borrowed by: <span class="font-medium">@borrowedBook.UserName</span></p>
+                                    <p class="text-xs text-gray-500">Borrowed on: @borrowedBook.BorrowDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</p>
+                                </div>
+                                <button 
+                                    class="btn btn-success"
+                                    @onclick="@(() => ReturnSelectedBook(borrowedBook.BorrowRecordId))"
+                                    disabled="@(IsSubmitting && SelectedBorrowRecordId == borrowedBook.BorrowRecordId)">
+                                    @if (IsSubmitting && SelectedBorrowRecordId == borrowedBook.BorrowRecordId)
+                                    {
+                                        <span>Returning...</span>
+                                    }
+                                    else
+                                    {
+                                        <span>Return</span>
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+
+            <div class="flex gap-2 justify-end mt-6">
+                <button class="btn btn-secondary" @onclick="Close">Close</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public List<BorrowedBookInfo?>? BorrowedBooks { get; set; }
+
+    [Parameter]
+    public Guid FilterBookId { get; set; } = Guid.Empty;
+
+    [Parameter]
+    public bool IsOpen { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnReturn { get; set; }
+
+    [Parameter]
+    public EventCallback OnClose { get; set; }
+
+    private Guid SelectedBorrowRecordId { get; set; }
+    private bool IsSubmitting { get; set; }
+    private List<BorrowedBookInfo>? FilteredBooks { get; set; }
+
+    public async Task Open(List<BorrowedBookInfo?> borrowedBooks, Guid? filterBookId = null)
+    {
+        BorrowedBooks = borrowedBooks;
+        FilterBookId = filterBookId ?? Guid.Empty;
+        UpdateFilteredBooks();
+        IsOpen = true;
+        SelectedBorrowRecordId = Guid.Empty;
+        await JSRuntime.InvokeVoidAsync("modalScroll.preventScroll");
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public async Task Close()
+    {
+        IsOpen = false;
+        BorrowedBooks = null;
+        FilterBookId = Guid.Empty;
+        FilteredBooks = null;
+        SelectedBorrowRecordId = Guid.Empty;
+        await JSRuntime.InvokeVoidAsync("modalScroll.allowScroll");
+        await OnClose.InvokeAsync();
+    }
+
+    private void UpdateFilteredBooks()
+    {
+        if (BorrowedBooks == null)
+        {
+            FilteredBooks = null;
+            return;
+        }
+
+        if (FilterBookId == Guid.Empty)
+        {
+            FilteredBooks = BorrowedBooks;
+        }
+        else
+        {
+            FilteredBooks = BorrowedBooks.Where(b => b.BookId == FilterBookId).ToList();
+        }
+    }
+
+    private async Task ReturnSelectedBook(Guid borrowRecordId)
+    {
+        IsSubmitting = true;
+        try
+        {
+            await OnReturn.InvokeAsync(borrowRecordId);
+            await Close();
+        }
+        finally
+        {
+            IsSubmitting = false;
+        }
+    }
+}

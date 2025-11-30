@@ -10,8 +10,10 @@ namespace Scio.Services
         Task<Book?> GetBookByIdAsync(Guid id);
         Task<List<Book>> SearchBooksAsync(string searchTerm);
         Task<Book?> AddBookAsync(Book book);
-        Task<bool> BorrowBookAsync(Guid id);
+        Task<bool> BorrowBookAsync(Guid id, string userName);
         Task<bool> ReturnBookAsync(Guid id);
+        Task<bool> ReturnBorrowRecordAsync(Guid borrowRecordId);
+        Task<List<BorrowedBookInfo>> GetBorrowedBooksAsync();
     }
 
     public class BookApiService : IBookApiService
@@ -97,11 +99,12 @@ namespace Scio.Services
             }
         }
 
-        public async Task<bool> BorrowBookAsync(Guid id)
+        public async Task<bool> BorrowBookAsync(Guid id, string userName)
         {
             try
             {
-                var response = await _httpClient.PostAsync($"{ApiBaseUrl}/{id}/borrow", null);
+                var request = new { UserName = userName };
+                var response = await _httpClient.PostAsJsonAsync($"{ApiBaseUrl}/{id}/borrow", request);
                 return response.IsSuccessStatusCode;
             }
             catch
@@ -120,6 +123,36 @@ namespace Scio.Services
             catch
             {
                 return false;
+            }
+        }
+
+        public async Task<bool> ReturnBorrowRecordAsync(Guid borrowRecordId)
+        {
+            try
+            {
+                var response = await _httpClient.PostAsync($"{ApiBaseUrl}/return-record/{borrowRecordId}", null);
+                return response.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<List<BorrowedBookInfo>> GetBorrowedBooksAsync()
+        {
+            try
+            {
+                var response = await _httpClient.GetAsync($"{ApiBaseUrl}/borrowed");
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadFromJsonAsync<List<BorrowedBookInfo>>() ?? [];
+                }
+                return [];
+            }
+            catch
+            {
+                return [];
             }
         }
     }

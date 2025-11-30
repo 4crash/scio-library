@@ -15,4 +15,8 @@
     <Exec Command="npm run build-css" WorkingDirectory="$(ProjectDir).." />
   </Target>
 
+  <Target Name="WatchCss" BeforeTargets="Watch;Serve;hot-reload">
+    <Exec Command="npm run watch-css" WorkingDirectory="$(ProjectDir).." />
+  </Target>
+
 </Project>

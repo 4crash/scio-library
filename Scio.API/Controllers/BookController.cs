@@ -4,6 +4,20 @@ using Scio.API.Services;
 
 namespace Scio.API.Controllers
 {
+    public class BorrowRequest
+    {
+        public string UserName { get; set; } = string.Empty;
+    }
+
+    public class BorrowedBookInfo
+    {
+        public Guid BookId { get; set; }
+        public string BookTitle { get; set; } = string.Empty;
+        public string BookAuthor { get; set; } = string.Empty;
+        public Guid BorrowRecordId { get; set; }
+        public string UserName { get; set; } = string.Empty;
+        public DateTime BorrowDate { get; set; }
+    }
     [ApiController]
     [Route("api/[controller]")]
     public class BookController : ControllerBase
@@ -61,9 +75,12 @@ namespace Scio.API.Controllers
 
         // POST /api/book/{id}/borrow - Borrow a book
         [HttpPost("{id}/borrow")]
-        public async Task<IActionResult> BorrowBook(Guid id)
+        public async Task<IActionResult> BorrowBook(Guid id, [FromBody] BorrowRequest request)
         {
-            var success = await _bookService.BorrowBookAsync(id);
+            if (string.IsNullOrWhiteSpace(request?.UserName))
+                return BadRequest("User name is required");
+
+            var success = await _bookService.BorrowBookAsync(id, request.UserName);
             if (!success)
                 return BadRequest("Book not available or not found");
 
@@ -79,6 +96,25 @@ namespace Scio.API.Controllers
                 return BadRequest("Book not found");
 
             return Ok("Book returned successfully");
+        }
+
+        // POST /api/book/return-record/{borrowRecordId} - Return a specific borrow record
+        [HttpPost("return-record/{borrowRecordId}")]
+        public async Task<IActionResult> ReturnBorrowRecord(Guid borrowRecordId)
+        {
+            var success = await _bookService.ReturnBorrowRecordAsync(borrowRecordId);
+            if (!success)
+                return BadRequest("Borrow record not found or already returned");
+
+            return Ok("Book returned successfully");
+        }
+
+        // GET /api/book/borrowed - Get all currently borrowed books
+        [HttpGet("borrowed")]
+        public async Task<ActionResult<IEnumerable<BorrowedBookInfo>>> GetBorrowedBooks()
+        {
+            var borrowedBooks = await _bookService.GetBorrowedBooksAsync();
+            return Ok(borrowedBooks);
         }
     }
 }

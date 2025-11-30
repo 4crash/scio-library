@@ -7,6 +7,8 @@ namespace Scio.API.Models
         public string Author { get; set; } = string.Empty;
         public int YearOfPublication { get; set; }
         public string ISBN { get; set; } = string.Empty;
-        public int AvailableCopies { get; set; }
+        public int TotalCopies { get; set; } // Total physical copies
+        public int AvailableCopies { get; set; } // Calculated: TotalCopies - ActiveBorrows
+        public List<BorrowRecord> BorrowHistory { get; set; } = new();
     }
 }

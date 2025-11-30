@@ -5,7 +5,136 @@
     "Author": "George Orwell",
     "YearOfPublication": 1949,
     "ISBN": "978-0451524935",
-    "AvailableCopies": 10
+    "TotalCopies": 12,
+    "AvailableCopies": 12,
+    "BorrowHistory": [
+      {
+        "Id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+        "User": "john.doe@example.com",
+        "BorrowDate": "2025-11-01T10:00:00Z",
+        "ReturnDate": "2025-11-15T14:30:00Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+        "User": "jane.smith@example.com",
+        "BorrowDate": "2025-11-20T09:15:00Z",
+        "ReturnDate": "2025-11-30T18:40:57.7351067Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "86a9d9e1-ae37-4dfe-815d-df90598e2a3b",
+        "User": "current.user@example.com",
+        "BorrowDate": "2025-11-30T18:38:43.69078Z",
+        "ReturnDate": "2025-11-30T18:40:53.2206988Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "b32aebed-70c1-49e8-a00d-fb5d10b46378",
+        "User": "current.user@example.com",
+        "BorrowDate": "2025-11-30T18:39:28.5217069Z",
+        "ReturnDate": "2025-11-30T18:39:46.2135834Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "9f8d2be4-94ee-4f89-ac90-ffa331925f70",
+        "User": "current.user@example.com",
+        "BorrowDate": "2025-11-30T18:40:18.4120826Z",
+        "ReturnDate": "2025-11-30T18:40:52.809823Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "2d9760e7-d719-44e8-8a26-9fce364c4fda",
+        "User": "current.user@example.com",
+        "BorrowDate": "2025-11-30T18:40:27.9602868Z",
+        "ReturnDate": "2025-11-30T18:40:44.3576853Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "2f1caa0c-580e-4eef-a163-7ebc3b5e7720",
+        "User": "current.user@example.com",
+        "BorrowDate": "2025-11-30T18:40:28.9254952Z",
+        "ReturnDate": "2025-11-30T18:40:37.4119892Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "93c65aec-1796-4636-8926-a6adef9e2e27",
+        "User": "current.user@example.com",
+        "BorrowDate": "2025-11-30T18:41:11.6314632Z",
+        "ReturnDate": "2025-11-30T18:41:26.3701004Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "35a68e3e-a67b-4661-8701-da87b077e178",
+        "User": "current.user@example.com",
+        "BorrowDate": "2025-11-30T18:42:37.4330799Z",
+        "ReturnDate": "2025-11-30T18:42:46.7881364Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "ea891ff8-6be9-4288-b822-460320d92c73",
+        "User": "current.user@example.com",
+        "BorrowDate": "2025-11-30T18:42:38.8783288Z",
+        "ReturnDate": "2025-11-30T18:42:44.2298556Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "bb1cb101-4487-4ea9-b349-1da148a9fa50",
+        "User": "John Smith",
+        "BorrowDate": "2025-11-30T19:30:26.2425549Z",
+        "ReturnDate": "2025-11-30T19:45:09.4866691Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "812692bd-b8d9-46f1-9740-58bc20155495",
+        "User": "tomas",
+        "BorrowDate": "2025-11-30T19:31:41.7701078Z",
+        "ReturnDate": "2025-11-30T19:46:39.0075404Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "c31dad20-6c0a-4796-b49f-fc0009310560",
+        "User": "jan",
+        "BorrowDate": "2025-11-30T19:31:47.2838996Z",
+        "ReturnDate": "2025-11-30T19:46:35.1845797Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "f776291d-5f4a-486e-a07d-05adc4e56c3a",
+        "User": "honza",
+        "BorrowDate": "2025-11-30T19:31:53.127891Z",
+        "ReturnDate": "2025-11-30T19:33:02.1554006Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "ae32b0d5-e251-432b-88a5-dfd505e7085a",
+        "User": "honza",
+        "BorrowDate": "2025-11-30T19:46:45.2791127Z",
+        "ReturnDate": "2025-11-30T19:47:37.9190401Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "40bfc4a0-2398-4c93-a213-160e3066fbf3",
+        "User": "jan",
+        "BorrowDate": "2025-11-30T19:46:48.9495943Z",
+        "ReturnDate": "2025-11-30T19:47:33.4433279Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "335b72f7-c8a5-400c-a07d-2818b4568eb5",
+        "User": "johny",
+        "BorrowDate": "2025-11-30T19:46:53.4180769Z",
+        "ReturnDate": "2025-11-30T19:46:55.5339437Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "a40cf11a-5104-4631-b84b-2989c21258ab",
+        "User": "test",
+        "BorrowDate": "2025-11-30T20:06:41.4644981Z",
+        "ReturnDate": "2025-11-30T20:21:16.57318Z",
+        "IsReturned": true
+      }
+    ]
   },
   {
     "Id": "5924867c-f62f-4bc0-9b3c-e4ad9067d999",
@@ -13,7 +142,45 @@
     "Author": "Harper Lee",
     "YearOfPublication": 1960,
     "ISBN": "978-0061120084",
-    "AvailableCopies": 3
+    "TotalCopies": 5,
+    "AvailableCopies": 5,
+    "BorrowHistory": [
+      {
+        "Id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
+        "User": "alice.wonder@example.com",
+        "BorrowDate": "2025-11-10T11:45:00Z",
+        "ReturnDate": "2025-11-30T19:57:30.7142329Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "d4e5f6a7-b8c9-0123-def0-456789012345",
+        "User": "bob.builder@example.com",
+        "BorrowDate": "2025-10-25T16:20:00Z",
+        "ReturnDate": "2025-11-05T13:10:00Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "eb0bca49-e7e9-40ba-bf54-998a5d550ec3",
+        "User": "strejda",
+        "BorrowDate": "2025-11-30T20:06:52.4369107Z",
+        "ReturnDate": "2025-11-30T20:22:31.2558641Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "886072e5-93d7-4899-89f9-48051ef71d50",
+        "User": "jan",
+        "BorrowDate": "2025-11-30T20:06:59.0395079Z",
+        "ReturnDate": "2025-11-30T20:38:52.5759516Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "7104547a-3f88-4c9d-8ca2-b065d16d8cf0",
+        "User": "johny",
+        "BorrowDate": "2025-11-30T20:07:05.0468717Z",
+        "ReturnDate": "2025-11-30T20:22:48.6351887Z",
+        "IsReturned": true
+      }
+    ]
   },
   {
     "Id": "283420a9-0ad5-45f2-a8a7-9e99e4dc9100",
@@ -21,14 +188,140 @@
     "Author": "F. Scott Fitzgerald",
     "YearOfPublication": 1925,
     "ISBN": "978-0743273565",
-    "AvailableCopies": 9
+    "TotalCopies": 10,
+    "AvailableCopies": 10,
+    "BorrowHistory": [
+      {
+        "Id": "e5f6a7b8-c9d0-1234-ef01-567890123456",
+        "User": "charlie.brown@example.com",
+        "BorrowDate": "2025-11-25T08:30:00Z",
+        "ReturnDate": "2025-11-30T19:57:47.3716913Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "d605e9f2-b3a0-4432-8000-82e0a3a475bf",
+        "User": "julie",
+        "BorrowDate": "2025-11-30T20:07:12.9903587Z",
+        "ReturnDate": "2025-11-30T20:50:32.70198Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "2578e2d4-3c53-4e5c-8f3c-83d213b11a6b",
+        "User": "tomas",
+        "BorrowDate": "2025-11-30T20:07:34.8667416Z",
+        "ReturnDate": "2025-11-30T20:50:37.9370382Z",
+        "IsReturned": true
+      }
+    ]
   },
   {
-    "Id": "2b05b0f0-3cb0-4ff3-b8f2-7dd859fe889d",
-    "Title": "sfads",
-    "Author": "dsfds",
-    "YearOfPublication": 2025,
-    "ISBN": "sadffdf546adsfsad",
-    "AvailableCopies": 0
+    "Id": "283420a9-0ad5-45f2-a8a7-9e99e4dc9101",
+    "Title": "Woman in the Dunes",
+    "Author": "Kobo Abe",
+    "YearOfPublication": 1962,
+    "ISBN": "978-4871315657",
+    "TotalCopies": 4,
+    "AvailableCopies": 4,
+    "BorrowHistory": [
+      {
+        "Id": "f6a7b8c9-d0e1-2345-f012-678901234567",
+        "User": "diana.prince@example.com",
+        "BorrowDate": "2025-11-18T12:00:00Z",
+        "ReturnDate": "2025-11-30T20:51:13.2558025Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "ba3ed111-1667-407b-9275-0e11a84fa5a8",
+        "User": "matej",
+        "BorrowDate": "2025-11-30T20:07:19.5676285Z",
+        "ReturnDate": "2025-11-30T20:56:27.3004314Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "6069d52f-962b-4c7b-a4e4-1fa93bf70c8c",
+        "User": "lukas",
+        "BorrowDate": "2025-11-30T20:07:24.7713014Z",
+        "ReturnDate": "2025-11-30T20:22:56.6011957Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "36a7bce5-b430-4b5a-aa7c-a797a04f9896",
+        "User": "johny",
+        "BorrowDate": "2025-11-30T20:51:36.3588564Z",
+        "ReturnDate": "2025-11-30T20:56:32.6870407Z",
+        "IsReturned": true
+      }
+    ]
+  },
+  {
+    "Id": "7c990b4a-e186-4392-8746-d49a0ba875db",
+    "Title": "Test Book",
+    "Author": "Test Author",
+    "YearOfPublication": 2023,
+    "ISBN": "TEST-1234567890",
+    "TotalCopies": 5,
+    "AvailableCopies": 5,
+    "BorrowHistory": [
+      {
+        "Id": "a7b8c9d0-e1f2-3456-0123-789012345678",
+        "User": "test.user@example.com",
+        "BorrowDate": "2025-11-28T10:00:00Z",
+        "ReturnDate": "2025-11-30T20:39:49.4136137Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "fe493d13-2de7-426a-9fec-3f5be2429589",
+        "User": "johny",
+        "BorrowDate": "2025-11-30T20:56:44.1650234Z",
+        "ReturnDate": "2025-11-30T22:53:01.1061055Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "a2f66475-1101-4907-aa7a-83f4b876afc2",
+        "User": "ester",
+        "BorrowDate": "2025-11-30T20:56:53.6784864Z",
+        "ReturnDate": "2025-11-30T21:35:36.4253422Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "42b9049e-5e4b-46fd-8c44-15560ec92e8e",
+        "User": "what",
+        "BorrowDate": "2025-11-30T20:57:00.8022069Z",
+        "ReturnDate": "2025-11-30T20:57:12.1247723Z",
+        "IsReturned": true
+      }
+    ]
+  },
+  {
+    "Id": "e66f339d-7374-47ae-924f-119aecb57c56",
+    "Title": "retezova reakce",
+    "Author": "Jan Kysela",
+    "YearOfPublication": 2021,
+    "ISBN": "5646-546-6666",
+    "TotalCopies": 10,
+    "AvailableCopies": 8,
+    "BorrowHistory": [
+      {
+        "Id": "3735aa37-b889-4f08-8d0d-fa7a5c406caf",
+        "User": "johny",
+        "BorrowDate": "2025-11-30T21:34:31.5015405Z",
+        "ReturnDate": null,
+        "IsReturned": false
+      },
+      {
+        "Id": "96c965cf-c2d6-48ec-adef-3e85d9711596",
+        "User": "kamila",
+        "BorrowDate": "2025-11-30T21:34:41.3869991Z",
+        "ReturnDate": "2025-11-30T21:37:38.1460009Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "f2f749f8-e2b0-4093-a8e4-b1e8d795acdc",
+        "User": "lada",
+        "BorrowDate": "2025-11-30T21:34:58.8765012Z",
+        "ReturnDate": null,
+        "IsReturned": false
+      }
+    ]
   }
 ]
