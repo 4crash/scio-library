@@ -7,50 +7,50 @@
 
 <div class="flex flex-col md:flex-row gap-4 mb-6">
     <div class="flex-1">
-        <input type="text" @bind="searchTerm" @bind:event="oninput" placeholder="Search by title, author, or ISBN..." class="form-control w-full" />
+        <input type="text" @bind="searchTerm" @bind:event="oninput" placeholder="Search by title, author, or ISBN..." class="border border-gray-300 rounded px-3 py-2 w-full" />
     </div>
     <div class="flex gap-2">
-        <button class="btn btn-primary" @onclick="LoadBooks">Refresh</button>
-        <button class="btn btn-primary bg-green-600 hover:bg-green-700" @onclick="ShowAddBookForm">Add New Book</button>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded" @onclick="LoadBooks">Refresh</button>
+        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded" @onclick="ShowAddBookForm">Add New Book</button>
     </div>
 </div>
 
 @if (showAddForm)
 {
-    <div class="card mb-6">
-        <div class="card-header border-b border-gray-200 pb-4">
+    <div class="bg-white rounded-lg shadow-md mb-6">
+        <div class="px-6 py-4 border-b border-gray-200">
             <h5 class="text-xl font-bold">Add New Book</h5>
         </div>
-        <div class="card-body p-6">
+        <div class="p-6">
             <div class="flex flex-col md:flex-row gap-6">
                 <div class="flex-1">
                     <div class="mb-4">
                         <label class="form-label block text-sm font-semibold mb-2">Title *</label>
-                        <input type="text" @bind="newBook.Title" class="form-control w-full" />
+                        <input type="text" @bind="newBook.Title" class="border border-gray-300 rounded px-3 py-2 w-full" />
                     </div>
                     <div class="mb-4">
                         <label class="form-label block text-sm font-semibold mb-2">Author *</label>
-                        <input type="text" @bind="newBook.Author" class="form-control w-full" />
+                        <input type="text" @bind="newBook.Author" class="border border-gray-300 rounded px-3 py-2 w-full" />
                     </div>
                     <div class="mb-4">
                         <label class="form-label block text-sm font-semibold mb-2">Year of Publication</label>
-                        <input type="number" @bind="newBook.YearOfPublication" class="form-control w-full" />
+                        <input type="number" @bind="newBook.YearOfPublication" class="border border-gray-300 rounded px-3 py-2 w-full" />
                     </div>
                 </div>
                 <div class="flex-1">
                     <div class="mb-4">
                         <label class="form-label block text-sm font-semibold mb-2">ISBN *</label>
-                        <input type="text" @bind="newBook.ISBN" class="form-control w-full" />
+                        <input type="text" @bind="newBook.ISBN" class="border border-gray-300 rounded px-3 py-2 w-full" />
                     </div>
                     <div class="mb-4">
                         <label class="form-label block text-sm font-semibold mb-2">Available Copies</label>
-                        <input type="number" @bind="newBook.AvailableCopies" class="form-control w-full" min="0" />
+                        <input type="number" @bind="newBook.AvailableCopies" class="border border-gray-300 rounded px-3 py-2 w-full" min="0" />
                     </div>
                 </div>
             </div>
             <div class="flex gap-2 mt-6">
-                <button class="btn btn-primary bg-green-600 hover:bg-green-700" @onclick="AddBook">Save Book</button>
-                <button class="btn btn-secondary" @onclick="CancelAdd">Cancel</button>
+                <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded" @onclick="AddBook">Save Book</button>
+                <button class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded" @onclick="CancelAdd">Cancel</button>
             </div>
         </div>
     </div>
@@ -97,15 +97,15 @@ else
                             <div class="flex gap-2">
                                 @if (book.AvailableCopies > 0)
                                 {
-                                    <button class="btn btn-primary bg-yellow-600 hover:bg-yellow-700 text-sm px-2 py-1" @onclick="@(() => BorrowBook(book.Id))">
+                                    <button class="bg-yellow-600 hover:bg-yellow-700 text-white text-sm px-2 py-1 rounded" @onclick="@(() => BorrowBook(book.Id))">
                                         Borrow
                                     </button>
                                 }
                                 else
                                 {
-                                    <button class="btn btn-secondary opacity-50 cursor-not-allowed text-sm px-2 py-1" disabled>Cannot Borrow</button>
+                                    <button class="bg-gray-500 text-white opacity-50 cursor-not-allowed text-sm px-2 py-1 rounded" disabled>Cannot Borrow</button>
                                 }
-                                <button class="btn btn-primary bg-blue-600 hover:bg-blue-700 text-sm px-2 py-1" @onclick="@(() => ReturnBook(book.Id))">
+                                <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-2 py-1 rounded" @onclick="@(() => ReturnBook(book.Id))">
                                     Return
                                 </button>
                             </div>
