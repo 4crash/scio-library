@@ -10,8 +10,8 @@
         <input type="text" @bind="searchTerm" @bind:event="oninput" placeholder="Search by title, author, or ISBN..." class="border border-gray-300 rounded px-3 py-2 w-full" />
     </div>
     <div class="flex gap-2">
-        <button class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded" @onclick="LoadBooks">Refresh</button>
-        <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded" @onclick="ShowAddBookForm">Add New Book</button>
+        <button class="btn btn-primary" @onclick="LoadBooks">Refresh</button>
+        <button class="btn btn-success" @onclick="ShowAddBookForm">Add New Book</button>
     </div>
 </div>
 
@@ -49,8 +49,8 @@
                 </div>
             </div>
             <div class="flex gap-2 mt-6">
-                <button class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded" @onclick="AddBook">Save Book</button>
-                <button class="bg-gray-500 hover:bg-gray-700 text-white px-4 py-2 rounded" @onclick="CancelAdd">Cancel</button>
+                <button class="btn btn-success" @onclick="AddBook">Save Book</button>
+                <button class="btn btn-secondary" @onclick="CancelAdd">Cancel</button>
             </div>
         </div>
     </div>
@@ -95,16 +95,11 @@ else
                         </td>
                         <td class="px-4 py-3">
                             <div class="flex gap-2">
-                                @if (book.AvailableCopies > 0)
-                                {
-                                    <button class="bg-yellow-600 hover:bg-yellow-700 text-white text-sm px-2 py-1 rounded" @onclick="@(() => BorrowBook(book.Id))">
+                               
+                                    <button class=" text-white text-sm px-2 py-1 rounded @(book.AvailableCopies>0 ? "bg-yellow-600 hover:bg-yellow-700" : "bg-gray-500 hover:bg-gray-500 cursor-not-allowed")"   @onclick="@(() => BorrowBook(book.Id))" disabled="@(book.AvailableCopies == 0)">
                                         Borrow
                                     </button>
-                                }
-                                else
-                                {
-                                    <button class="bg-gray-500 text-white opacity-50 cursor-not-allowed text-sm px-2 py-1 rounded" disabled>Cannot Borrow</button>
-                                }
+                               
                                 <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-2 py-1 rounded" @onclick="@(() => ReturnBook(book.Id))">
                                     Return
                                 </button>

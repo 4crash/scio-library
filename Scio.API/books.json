@@ -5,7 +5,7 @@
     "Author": "George Orwell",
     "YearOfPublication": 1949,
     "ISBN": "978-0451524935",
-    "AvailableCopies": 5
+    "AvailableCopies": 3
   },
   {
     "Id": "5924867c-f62f-4bc0-9b3c-e4ad9067d999",
@@ -13,7 +13,7 @@
     "Author": "Harper Lee",
     "YearOfPublication": 1960,
     "ISBN": "978-0061120084",
-    "AvailableCopies": 1
+    "AvailableCopies": 3
   },
   {
     "Id": "283420a9-0ad5-45f2-a8a7-9e99e4dc9100",
@@ -21,7 +21,7 @@
     "Author": "F. Scott Fitzgerald",
     "YearOfPublication": 1925,
     "ISBN": "978-0743273565",
-    "AvailableCopies": 7
+    "AvailableCopies": 3
   },
   {
     "Id": "2b05b0f0-3cb0-4ff3-b8f2-7dd859fe889d",
@@ -29,6 +29,6 @@
     "Author": "dsfds",
     "YearOfPublication": 2025,
     "ISBN": "sadffdf546adsfsad",
-    "AvailableCopies": 10
+    "AvailableCopies": 0
   }
 ]
