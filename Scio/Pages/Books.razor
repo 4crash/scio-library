@@ -96,11 +96,11 @@ else
                         <td class="px-4 py-3">
                             <div class="flex gap-2">
                                
-                                    <button class=" text-white text-sm px-2 py-1 rounded @(book.AvailableCopies>0 ? "bg-yellow-600 hover:bg-yellow-700" : "bg-gray-500 hover:bg-gray-500 cursor-not-allowed")"   @onclick="@(() => BorrowBook(book.Id))" disabled="@(book.AvailableCopies == 0)">
+                                    <button class="btn @(book.AvailableCopies > 0 ? "btn-warning" : "btn-warning")" @onclick="@(() => BorrowBook(book.Id))" disabled="@(book.AvailableCopies == 0)">
                                         Borrow
                                     </button>
                                
-                                <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-2 py-1 rounded" @onclick="@(() => ReturnBook(book.Id))">
+                                <button class="btn btn-primary" @onclick="@(() => ReturnBook(book.Id))">
                                     Return
                                 </button>
                             </div>

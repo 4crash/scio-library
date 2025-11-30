@@ -11,4 +11,8 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.9" PrivateAssets="all" />
   </ItemGroup>
 
+  <Target Name="BuildCss" BeforeTargets="Build">
+    <Exec Command="npm run build-css" WorkingDirectory="$(ProjectDir).." />
+  </Target>
+
 </Project>
