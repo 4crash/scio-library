@@ -4,11 +4,6 @@ using Scio.API.Services;
 
 namespace Scio.API.Controllers
 {
-    public class BorrowRequest
-    {
-        public string UserName { get; set; } = string.Empty;
-    }
-
     public class BorrowedBookInfo
     {
         public Guid BookId { get; set; }
@@ -18,6 +13,7 @@ namespace Scio.API.Controllers
         public string UserName { get; set; } = string.Empty;
         public DateTime BorrowDate { get; set; }
     }
+
     [ApiController]
     [Route("api/[controller]")]
     public class BookController : ControllerBase
@@ -49,25 +45,44 @@ namespace Scio.API.Controllers
 
         // GET /api/book/search?term={searchTerm} - Search books
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<Book>>> SearchBooks([FromQuery] string term)
+        public async Task<ActionResult<IEnumerable<Book>>> SearchBooks([FromQuery] SearchRequest request)
         {
-            var books = await _bookService.SearchBooksAsync(term);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var searchTerm = string.IsNullOrWhiteSpace(request?.SearchTerm)
+                ? string.Empty
+                : request.SearchTerm.Trim();
+
+            var books = await _bookService.SearchBooksAsync(searchTerm);
             return Ok(books);
         }
 
         // POST /api/book - Add new book
         [HttpPost]
-        public async Task<ActionResult<Book>> AddBook([FromBody] Book book)
+        public async Task<ActionResult<Book>> AddBook([FromBody] AddBookRequest request)
         {
-            if (book == null)
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (request == null)
                 return BadRequest("Book data is required");
 
-            if (string.IsNullOrWhiteSpace(book.Title) ||
-                string.IsNullOrWhiteSpace(book.Author) ||
-                string.IsNullOrWhiteSpace(book.ISBN))
+            // Trim string inputs for security
+            var yearOfPublication = 0;
+            if (!string.IsNullOrWhiteSpace(request.YearOfPublication))
             {
-                return BadRequest("Title, Author, and ISBN are required");
+                int.TryParse(request.YearOfPublication.Trim(), out yearOfPublication);
             }
+
+            var book = new Book
+            {
+                Title = request.Title.Trim(),
+                Author = request.Author.Trim(),
+                YearOfPublication = yearOfPublication,
+                ISBN = request.ISBN.Trim(),
+                TotalCopies = request.TotalCopies
+            };
 
             var addedBook = await _bookService.AddBookAsync(book);
             return CreatedAtAction(nameof(GetBookById), new { id = addedBook.Id }, addedBook);
@@ -77,10 +92,13 @@ namespace Scio.API.Controllers
         [HttpPost("{id}/borrow")]
         public async Task<IActionResult> BorrowBook(Guid id, [FromBody] BorrowRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request?.UserName))
-                return BadRequest("User name is required");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var success = await _bookService.BorrowBookAsync(id, request.UserName);
+            if (request == null)
+                return BadRequest("Request data is required");
+
+            var success = await _bookService.BorrowBookAsync(id, request.UserName.Trim());
             if (!success)
                 return BadRequest("Book not available or not found");
 

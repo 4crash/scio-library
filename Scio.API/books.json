@@ -6,7 +6,7 @@
     "YearOfPublication": 1949,
     "ISBN": "978-0451524935",
     "TotalCopies": 12,
-    "AvailableCopies": 12,
+    "AvailableCopies": 11,
     "BorrowHistory": [
       {
         "Id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -133,6 +133,20 @@
         "BorrowDate": "2025-11-30T20:06:41.4644981Z",
         "ReturnDate": "2025-11-30T20:21:16.57318Z",
         "IsReturned": true
+      },
+      {
+        "Id": "b19142dd-124d-4f6b-bf26-e94ffc739eb0",
+        "User": "johny",
+        "BorrowDate": "2025-12-01T07:23:29.4795266Z",
+        "ReturnDate": "2025-12-01T11:26:57.7538214Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "9cfd4bc7-6116-46aa-82ce-14857bb2d14c",
+        "User": "johny",
+        "BorrowDate": "2025-12-01T11:26:43.6728369Z",
+        "ReturnDate": null,
+        "IsReturned": false
       }
     ]
   },
@@ -143,7 +157,7 @@
     "YearOfPublication": 1960,
     "ISBN": "978-0061120084",
     "TotalCopies": 5,
-    "AvailableCopies": 5,
+    "AvailableCopies": 4,
     "BorrowHistory": [
       {
         "Id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
@@ -179,6 +193,20 @@
         "BorrowDate": "2025-11-30T20:07:05.0468717Z",
         "ReturnDate": "2025-11-30T20:22:48.6351887Z",
         "IsReturned": true
+      },
+      {
+        "Id": "7cad51cd-5020-4b8d-b9c7-d5e8bbb99609",
+        "User": "klempir",
+        "BorrowDate": "2025-12-01T07:24:24.8578208Z",
+        "ReturnDate": "2025-12-01T07:24:37.0089255Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "b8533c65-4ae8-4caa-ab9a-196b6e8e0ca6",
+        "User": "jan",
+        "BorrowDate": "2025-12-01T10:59:19.680564Z",
+        "ReturnDate": null,
+        "IsReturned": false
       }
     ]
   },
@@ -221,7 +249,7 @@
     "YearOfPublication": 1962,
     "ISBN": "978-4871315657",
     "TotalCopies": 4,
-    "AvailableCopies": 4,
+    "AvailableCopies": 3,
     "BorrowHistory": [
       {
         "Id": "f6a7b8c9-d0e1-2345-f012-678901234567",
@@ -250,6 +278,13 @@
         "BorrowDate": "2025-11-30T20:51:36.3588564Z",
         "ReturnDate": "2025-11-30T20:56:32.6870407Z",
         "IsReturned": true
+      },
+      {
+        "Id": "496a2849-ffc2-4f49-a6bc-535a44521a5f",
+        "User": "ASda",
+        "BorrowDate": "2025-12-01T10:58:00.3861168Z",
+        "ReturnDate": null,
+        "IsReturned": false
       }
     ]
   },
@@ -260,7 +295,7 @@
     "YearOfPublication": 2023,
     "ISBN": "TEST-1234567890",
     "TotalCopies": 5,
-    "AvailableCopies": 5,
+    "AvailableCopies": 4,
     "BorrowHistory": [
       {
         "Id": "a7b8c9d0-e1f2-3456-0123-789012345678",
@@ -289,6 +324,13 @@
         "BorrowDate": "2025-11-30T20:57:00.8022069Z",
         "ReturnDate": "2025-11-30T20:57:12.1247723Z",
         "IsReturned": true
+      },
+      {
+        "Id": "97509530-bdc8-40f0-af68-57a43f78a8f5",
+        "User": "newis",
+        "BorrowDate": "2025-12-01T10:58:16.7973835Z",
+        "ReturnDate": null,
+        "IsReturned": false
       }
     ]
   },
@@ -299,14 +341,14 @@
     "YearOfPublication": 2021,
     "ISBN": "5646-546-6666",
     "TotalCopies": 10,
-    "AvailableCopies": 8,
+    "AvailableCopies": 9,
     "BorrowHistory": [
       {
         "Id": "3735aa37-b889-4f08-8d0d-fa7a5c406caf",
         "User": "johny",
         "BorrowDate": "2025-11-30T21:34:31.5015405Z",
-        "ReturnDate": null,
-        "IsReturned": false
+        "ReturnDate": "2025-12-01T07:23:47.0592914Z",
+        "IsReturned": true
       },
       {
         "Id": "96c965cf-c2d6-48ec-adef-3e85d9711596",
@@ -319,6 +361,31 @@
         "Id": "f2f749f8-e2b0-4093-a8e4-b1e8d795acdc",
         "User": "lada",
         "BorrowDate": "2025-11-30T21:34:58.8765012Z",
+        "ReturnDate": null,
+        "IsReturned": false
+      }
+    ]
+  },
+  {
+    "Id": "841b3845-45cb-42b5-825a-86812be9cdb2",
+    "Title": "aDSAd",
+    "Author": "asdad",
+    "YearOfPublication": 2000,
+    "ISBN": "asdasd",
+    "TotalCopies": 2,
+    "AvailableCopies": 0,
+    "BorrowHistory": [
+      {
+        "Id": "c7d9cc56-6a8d-471d-9f54-d5f0b855488c",
+        "User": "johny",
+        "BorrowDate": "2025-12-01T08:20:55.7787648Z",
+        "ReturnDate": null,
+        "IsReturned": false
+      },
+      {
+        "Id": "70a4e760-16bf-4f35-88c6-82ab12b9e0a8",
+        "User": "kamil",
+        "BorrowDate": "2025-12-01T11:27:13.876365Z",
         "ReturnDate": null,
         "IsReturned": false
       }

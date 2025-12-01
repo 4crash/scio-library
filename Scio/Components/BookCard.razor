@@ -1,0 +1,63 @@
+@using Scio.Models
+
+<div class="bg-white rounded-lg shadow-md">
+    <div class="px-6 py-4 border-b border-gray-200">
+        <div class="flex items-start">
+            <div class="flex-1">
+                <h4 class="text-lg font-bold text-scio-gray-dark">@Book.Title</h4>
+                <p class="text-sm text-gray-600">by @Book.Author</p>
+                <div class="flex-row mt-2 text-sm ">
+                    <span class="text-gray-600">Year: <span class="font-semibold">@Book.YearOfPublication</span></span>
+                    <span class="text-gray-600">ISBN: <code class="bg-gray-100 px-2 py-1 rounded text-xs">@Book.ISBN</code></span>
+                    <span class="px-3 py-1 rounded-full text-white whitespace-nowrap @(Book.AvailableCopies > 0 ? "bg-green-600" : "bg-red-600")">@Book.AvailableCopies / @Book.TotalCopies available</span>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row gap-2">
+                <button class="btn @(Book.AvailableCopies > 0 ? "btn-warning" : "btn-warning disabled")" @onclick="@(() => OnBorrow.InvokeAsync())" disabled="@(Book.AvailableCopies == 0)">
+                    Borrow
+                </button>
+                <button class="btn btn-primary" @onclick="@(() => OnReturn.InvokeAsync())">
+                    Return
+                </button>
+                <button class="btn btn-info w-36" @onclick="@(() => OnToggleHistory.InvokeAsync())">
+                    @if (IsHistoryExpanded)
+                    {
+                        <span>Hide History</span>
+                    }
+                    else
+                    {
+                        <span>Borrow History</span>
+                    }
+                </button>
+            </div>
+        </div>
+    </div>
+
+    @if (IsHistoryExpanded)
+    {
+        <BorrowHistorySection Book="Book" IsLoading="IsHistoryLoading" BorrowedRecords="BorrowedRecords" />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public Book Book { get; set; } = new();
+
+    [Parameter]
+    public bool IsHistoryExpanded { get; set; }
+
+    [Parameter]
+    public bool IsHistoryLoading { get; set; }
+
+    [Parameter]
+    public List<BorrowedBookInfo> BorrowedRecords { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnBorrow { get; set; }
+
+    [Parameter]
+    public EventCallback OnReturn { get; set; }
+
+    [Parameter]
+    public EventCallback OnToggleHistory { get; set; }
+}

@@ -1,0 +1,57 @@
+@using Scio.Models
+
+@if (IsLoading)
+{
+    <div class="p-6 border-t border-gray-200">
+        <p class="text-scio-gray-dark"><em>Loading borrow history...</em></p>
+    </div>
+}
+else if (BorrowedRecords != null && BorrowedRecords.Any())
+{
+    <div class="p-6 border-t border-gray-200">
+        <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-gray-50 border-b border-gray-300">
+                        <th class="text-left px-4 py-2 font-semibold text-scio-gray-dark">User</th>
+                        <th class="text-left px-4 py-2 font-semibold text-scio-gray-dark">Borrow Date</th>
+                        <th class="text-left px-4 py-2 font-semibold text-scio-gray-dark">Return Date</th>
+                        <th class="text-left px-4 py-2 font-semibold text-scio-gray-dark">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var borrowedBook in BorrowedRecords.OrderByDescending(b => b.BorrowDate))
+                    {
+                        <tr class="border-b border-gray-200">
+                            <td class="px-4 py-2">@borrowedBook.UserName</td>
+                            <td class="px-4 py-2">@borrowedBook.BorrowDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                            <td class="px-4 py-2">@(borrowedBook.ReturnDate.HasValue ? borrowedBook.ReturnDate.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "Not returned")</td>
+                            <td class="px-4 py-2">
+                                <span class="px-2 py-1 rounded-full text-xs @(borrowedBook.ReturnDate.HasValue ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800")">
+                                    @(borrowedBook.ReturnDate.HasValue ? "Returned" : "Borrowed")
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <div class="p-6 border-t border-gray-200">
+        <p class="text-scio-gray-dark"><em>No borrow history for this book.</em></p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Book Book { get; set; } = new();
+
+    [Parameter]
+    public bool IsLoading { get; set; }
+
+    [Parameter]
+    public List<BorrowedBookInfo> BorrowedRecords { get; set; } = new();
+}

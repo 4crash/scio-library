@@ -1,0 +1,94 @@
+@using Scio.Models
+@using Scio.Services
+@inject ToastService ToastService
+@implements IAsyncDisposable
+
+<div class="toast-container">
+    @foreach (var toast in toasts)
+    {
+        <div class="toast @toast.CssClass" role="alert">
+            <div class="toast-content">
+                <span class="toast-icon">
+                    @switch (toast.Type)
+                    {
+                        case ToastType.Success:
+                            <span>✓</span>
+                            break;
+                        case ToastType.Error:
+                            <span>✕</span>
+                            break;
+                        case ToastType.Warning:
+                            <span>⚠</span>
+                            break;
+                        default:
+                            <span>ℹ</span>
+                            break;
+                    }
+                </span>
+                <span class="toast-message">@toast.Message</span>
+            </div>
+            <button class="toast-close" @onclick="@(() => RemoveToast(toast.Id))" aria-label="Close">×</button>
+        </div>
+    }
+</div>
+
+@code {
+    private List<ToastMessage> toasts = new();
+    private Dictionary<string, CancellationTokenSource> dismissTimers = new();
+
+    protected override void OnInitialized()
+    {
+        ToastService.OnToastAdded += AddToast;
+        ToastService.OnToastRemoved += RemoveToast;
+    }
+
+    private void AddToast(ToastMessage toast)
+    {
+        toasts.Add(toast);
+        StateHasChanged();
+
+        // Schedule auto-dismiss
+        var cts = new CancellationTokenSource();
+        dismissTimers[toast.Id] = cts;
+
+        _ = Task.Delay(toast.DurationMs, cts.Token).ContinueWith(async _ =>
+        {
+            if (!cts.Token.IsCancellationRequested)
+            {
+                await InvokeAsync(() => RemoveToast(toast.Id));
+            }
+        }, TaskScheduler.Default);
+    }
+
+    private void RemoveToast(string toastId)
+    {
+        var toast = toasts.FirstOrDefault(t => t.Id == toastId);
+        if (toast != null)
+        {
+            toasts.Remove(toast);
+        }
+
+        // Cancel and clean up the timer
+        if (dismissTimers.TryGetValue(toastId, out var cts))
+        {
+            cts.Cancel();
+            cts.Dispose();
+            dismissTimers.Remove(toastId);
+        }
+
+        StateHasChanged();
+    }
+
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        ToastService.OnToastAdded -= AddToast;
+        ToastService.OnToastRemoved -= RemoveToast;
+
+        foreach (var cts in dismissTimers.Values)
+        {
+            cts.Dispose();
+        }
+
+        await ValueTask.CompletedTask;
+    }
+}

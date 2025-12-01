@@ -2,7 +2,8 @@
 @using Scio.Models
 @using Scio.Services
 @using Scio.Components
-@inject IBookApiService BookApiService
+@inject BookManagementService BookManagement
+@inject ToastService Toast
 
 <h3 class="text-2xl font-bold text-scio-gray-dark mb-6">Library Book Management System</h3>
 
@@ -16,46 +17,7 @@
     </div>
 </div>
 
-@if (showAddForm)
-{
-    <div class="bg-white rounded-lg shadow-md mb-6">
-        <div class="px-6 py-4 border-b border-gray-200">
-            <h5 class="text-xl font-bold">Add New Book</h5>
-        </div>
-        <div class="p-6">
-            <div class="flex flex-col md:flex-row gap-6">
-                <div class="flex-1">
-                    <div class="mb-4">
-                        <label class="form-label block text-sm font-semibold mb-2">Title *</label>
-                        <input type="text" @bind="newBook.Title" class="border border-gray-300 rounded px-3 py-2 w-full" />
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label block text-sm font-semibold mb-2">Author *</label>
-                        <input type="text" @bind="newBook.Author" class="border border-gray-300 rounded px-3 py-2 w-full" />
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label block text-sm font-semibold mb-2">Year of Publication</label>
-                        <input type="number" @bind="newBook.YearOfPublication" class="border border-gray-300 rounded px-3 py-2 w-full" />
-                    </div>
-                </div>
-                <div class="flex-1">
-                    <div class="mb-4">
-                        <label class="form-label block text-sm font-semibold mb-2">ISBN *</label>
-                        <input type="text" @bind="newBook.ISBN" class="border border-gray-300 rounded px-3 py-2 w-full" />
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label block text-sm font-semibold mb-2">Total Copies *</label>
-                        <input type="number" @bind="newBook.TotalCopies" class="border border-gray-300 rounded px-3 py-2 w-full" min="1" />
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-2 mt-6">
-                <button class="btn btn-success" @onclick="AddBook">Save Book</button>
-                <button class="btn btn-secondary" @onclick="CancelAdd">Cancel</button>
-            </div>
-        </div>
-    </div>
-}
+<BookForm IsVisible="showAddForm" Book="newBook" OnSave="AddBook" OnCancel="CancelAdd" />
 
 @if (books == null)
 {
@@ -64,7 +26,7 @@
 else if (!books.Any())
 {
     <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800">
-        No books found. @if (!string.IsNullOrWhiteSpace(searchTerm)) { <text>Try adjusting your search term.</text> }
+        No books found.
     </div>
 }
 else
@@ -72,83 +34,14 @@ else
     <div class="space-y-4">
         @foreach (var book in books)
         {
-            <div class="bg-white rounded-lg shadow-md">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <div class="flex  items-start">
-                        <div class="flex-1">
-                            <h4 class="text-lg font-bold text-scio-gray-dark">@book.Title</h4>
-                            <p class="text-sm text-gray-600">by @book.Author</p>
-                            <div class="flex-row mt-2 text-sm ">
-                                <span class="text-gray-600">Year: <span class="font-semibold">@book.YearOfPublication</span></span>
-                                <span class="text-gray-600">ISBN: <code class="bg-gray-100 px-2 py-1 rounded text-xs">@book.ISBN</code></span>
-                                <span class="px-3 py-1 rounded-full text-white text-nowrap @(book.AvailableCopies > 0 ? "bg-green-600" : "bg-red-600")">@book.AvailableCopies / @book.TotalCopies available</span>
-                            </div>
-                        </div>
-                        <div class="flex flex-col md:flex-row gap-2">
-                            <button class="btn @(book.AvailableCopies > 0 ? "btn-warning" : "btn-warning disabled")" @onclick="@(() => OpenBorrowModal(book.Id, book.Title, book.Author))" disabled="@(book.AvailableCopies == 0)">
-                                Borrow
-                            </button>
-                            <button class="btn btn-primary" @onclick="@(() => ShowReturnModalForBook(book.Id))">
-                                Return
-                            </button>
-                            <button class="btn btn-info w-36" @onclick="@(() => ToggleBorrowHistory(book.Id))">
-                                @if (expandedBookId == book.Id)
-                                {
-                                    <span>Hide History</span>
-                                }
-                                else
-                                {
-                                    <span>Borrow History</span>
-                                }
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                @if (expandedBookId == book.Id)
-                {
-                    <div class="p-6 border-t border-gray-200">
-                        @if (bookHistoryLoading.Contains(book.Id))
-                        {
-                            <p class="text-scio-gray-dark"><em>Loading borrow history...</em></p>
-                        }
-                        else if (bookBorrowedHistory != null && bookBorrowedHistory.ContainsKey(book.Id) && bookBorrowedHistory[book.Id].Any())
-                        {
-                            <div class="overflow-x-auto">
-                                <table class="w-full border-collapse">
-                                    <thead>
-                                        <tr class="bg-gray-50 border-b border-gray-300">
-                                            <th class="text-left px-4 py-2 font-semibold text-scio-gray-dark">User</th>
-                                            <th class="text-left px-4 py-2 font-semibold text-scio-gray-dark">Borrow Date</th>
-                                            <th class="text-left px-4 py-2 font-semibold text-scio-gray-dark">Return Date</th>
-                                            <th class="text-left px-4 py-2 font-semibold text-scio-gray-dark">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var borrowedBook in bookBorrowedHistory[book.Id].OrderByDescending(b => b.BorrowDate))
-                                        {
-                                            <tr class="border-b border-gray-200">
-                                                <td class="px-4 py-2">@borrowedBook.UserName</td>
-                                                <td class="px-4 py-2">@borrowedBook.BorrowDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
-                                                <td class="px-4 py-2">@(borrowedBook.ReturnDate.HasValue ? borrowedBook.ReturnDate.Value.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : "Not returned")</td>
-                                                <td class="px-4 py-2">
-                                                    <span class="px-2 py-1 rounded-full text-xs @(borrowedBook.ReturnDate.HasValue ? "bg-green-100 text-green-800" : "bg-yellow-100 text-yellow-800")">
-                                                        @(borrowedBook.ReturnDate.HasValue ? "Returned" : "Borrowed")
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-                            </div>
-                        }
-                        else
-                        {
-                            <p class="text-scio-gray-dark"><em>No borrow history for this book.</em></p>
-                        }
-                    </div>
-                }
-            </div>
+            <BookCard 
+                Book="book"
+                IsHistoryExpanded="expandedBookId == book.Id"
+                IsHistoryLoading="bookHistoryLoading.Contains(book.Id)"
+                BorrowedRecords="GetBookHistory(book.Id)"
+                OnBorrow="@(async () => await OpenBorrowModal(book.Id, book.Title, book.Author))"
+                OnReturn="@(async () => await ShowReturnModalForBook(book.Id))"
+                OnToggleHistory="@(async () => await ToggleBorrowHistory(book.Id))" />
         }
     </div>
 }
@@ -180,15 +73,29 @@ else
         await LoadBooks();
     }
 
+    // Helper method to get book history safely
+    private List<BorrowedBookInfo> GetBookHistory(Guid bookId)
+    {
+        return bookBorrowedHistory.ContainsKey(bookId) 
+            ? bookBorrowedHistory[bookId] 
+            : new List<BorrowedBookInfo>();
+    }
+
     private async Task LoadBooks()
     {
-        if (string.IsNullOrWhiteSpace(searchTerm))
+        var result = await BookManagement.LoadBooksAsync(searchTerm);
+        if (result.Success)
         {
-            books = await BookApiService.GetAllBooksAsync();
+            books = result.Data;
+            if (searchTerm == "")
+            {
+                Toast.ShowSuccess($"Books loaded successfully. ({books?.Count ?? 0} books)");
+            }
         }
         else
         {
-            books = await BookApiService.SearchBooksAsync(searchTerm);
+            Toast.ShowFromResult(result);
+            books = new List<Book>();
         }
         StateHasChanged();
     }
@@ -207,51 +114,46 @@ else
 
     private async Task AddBook()
     {
-        if (string.IsNullOrWhiteSpace(newBook.Title) ||
-            string.IsNullOrWhiteSpace(newBook.Author) ||
-            string.IsNullOrWhiteSpace(newBook.ISBN) ||
-            newBook.TotalCopies <= 0)
+        var result = await BookManagement.AddBookAsync(newBook);
+        if (result.Success)
         {
-            return; // Validation would be handled here
+            Toast.ShowSuccess($"Book '{newBook.Title}' added successfully!");
+            showAddForm = false;
+            newBook = new Book();
+            await LoadBooks();
         }
-
-        newBook.AvailableCopies = newBook.TotalCopies; // Initially all copies are available
-        newBook.BorrowHistory = new List<BorrowRecord>(); // Initialize empty history
-
-        await BookApiService.AddBookAsync(newBook);
-        showAddForm = false;
-        newBook = new Book();
-        await LoadBooks();
+        else
+        {
+            Toast.ShowFromResult(result);
+        }
     }
 
-    private void OpenBorrowModal(Guid bookId, string title, string author)
+    private Task OpenBorrowModal(Guid bookId, string title, string author)
     {
         selectedBookId = bookId;
         selectedBookTitle = title;
         selectedBookAuthor = author;
         showBorrowModal = true;
         StateHasChanged();
+        return Task.CompletedTask;
     }
 
     private async Task HandleBorrow(string userName)
     {
-        var success = await BookApiService.BorrowBookAsync(selectedBookId, userName);
-        if (success)
+        var result = await BookManagement.BorrowBookAsync(selectedBookId, userName);
+        if (result.Success)
         {
+            Toast.ShowSuccess($"Book borrowed successfully by {userName}!");
             await LoadBooks(); // Refresh the list
             // Refresh opened borrow history if a book history is expanded
             if (expandedBookId != Guid.Empty)
             {
-                bookHistoryLoading.Add(expandedBookId);
-                StateHasChanged();
-                
-                var allBorrowedBooks = await BookApiService.GetBorrowedBooksAsync();
-                var bookHistory = allBorrowedBooks?.Where(b => b.BookId == expandedBookId).ToList() ?? new();
-                bookBorrowedHistory[expandedBookId] = bookHistory;
-                
-                bookHistoryLoading.Remove(expandedBookId);
-                StateHasChanged();
+                await RefreshBookHistory(expandedBookId);
             }
+        }
+        else
+        {
+            Toast.ShowFromResult(result);
         }
     }
 
@@ -268,42 +170,42 @@ else
     {
         if (returnModal is not null)
         {
-            var allBorrowedBooks = await BookApiService.GetBorrowedBooksAsync();
-            // Filter to only show currently borrowed copies (ReturnDate is null)
-            borrowedBooksList = allBorrowedBooks?.Where(b => b.ReturnDate == null).ToList();
-            filterBookId = bookId;
-           
-            await returnModal.Open(borrowedBooksList, bookId);
-            showReturnModal = true;
-            StateHasChanged();
+            var result = await BookManagement.GetCurrentlyBorrowedBooksAsync();
+            if (result.Success && result.Data != null)
+            {
+                borrowedBooksList = result.Data;
+                filterBookId = bookId;
+                await returnModal.Open(borrowedBooksList.Cast<BorrowedBookInfo?>().ToList(), bookId);
+                showReturnModal = true;
+                StateHasChanged();
+            }
+            else
+            {
+                Toast.ShowFromResult(result);
+            }
         }
     }
 
-  
-
     private async Task HandleReturn(Guid borrowRecordId)
     {
-        var success = await BookApiService.ReturnBorrowRecordAsync(borrowRecordId);
-        if (success)
+        var result = await BookManagement.ReturnBookAsync(borrowRecordId);
+        if (result.Success)
         {
+            Toast.ShowSuccess("Book returned successfully!");
             await LoadBooks(); // Refresh the main books list
             // Refresh the borrowed books list to remove the returned item
             borrowedBooksList = null;
             // Refresh opened borrow history if a book history is expanded
             if (expandedBookId != Guid.Empty)
             {
-                bookHistoryLoading.Add(expandedBookId);
-                StateHasChanged();
-                
-                var allBorrowedBooks = await BookApiService.GetBorrowedBooksAsync();
-                var bookHistory = allBorrowedBooks?.Where(b => b.BookId == expandedBookId).ToList() ?? new();
-                bookBorrowedHistory[expandedBookId] = bookHistory;
-                
-                bookHistoryLoading.Remove(expandedBookId);
-                StateHasChanged();
+                await RefreshBookHistory(expandedBookId);
             }
             // Close the modal
             CloseReturnModal();
+        }
+        else
+        {
+            Toast.ShowFromResult(result);
         }
     }
 
@@ -325,16 +227,29 @@ else
             expandedBookId = bookId;
             if (!bookBorrowedHistory.ContainsKey(bookId))
             {
-                bookHistoryLoading.Add(bookId);
-                StateHasChanged();
-                
-                var allBorrowedBooks = await BookApiService.GetBorrowedBooksAsync();
-                var bookHistory = allBorrowedBooks?.Where(b => b.BookId == bookId).ToList() ?? new();
-                bookBorrowedHistory[bookId] = bookHistory;
-                
-                bookHistoryLoading.Remove(bookId);
+                await RefreshBookHistory(bookId);
             }
         }
+        StateHasChanged();
+    }
+
+    private async Task RefreshBookHistory(Guid bookId)
+    {
+        bookHistoryLoading.Add(bookId);
+        StateHasChanged();
+        
+        var result = await BookManagement.GetBookHistoryAsync(bookId);
+        if (result.Success && result.Data != null)
+        {
+            bookBorrowedHistory[bookId] = result.Data;
+        }
+        else
+        {
+            // Log or handle error silently for background refresh
+            bookBorrowedHistory[bookId] = new();
+        }
+        
+        bookHistoryLoading.Remove(bookId);
         StateHasChanged();
     }
 }

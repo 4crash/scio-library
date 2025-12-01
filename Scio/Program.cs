@@ -9,5 +9,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddScoped<IBookApiService, BookApiService>();
+builder.Services.AddScoped<BookManagementService>();
+builder.Services.AddScoped<ToastService>();
 
 await builder.Build().RunAsync();

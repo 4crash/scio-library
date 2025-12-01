@@ -6,14 +6,14 @@ namespace Scio.Services
 {
     public interface IBookApiService
     {
-        Task<List<Book>> GetAllBooksAsync();
-        Task<Book?> GetBookByIdAsync(Guid id);
-        Task<List<Book>> SearchBooksAsync(string searchTerm);
-        Task<Book?> AddBookAsync(Book book);
-        Task<bool> BorrowBookAsync(Guid id, string userName);
-        Task<bool> ReturnBookAsync(Guid id);
-        Task<bool> ReturnBorrowRecordAsync(Guid borrowRecordId);
-        Task<List<BorrowedBookInfo>> GetBorrowedBooksAsync();
+        Task<ApiResult<List<Book>>> GetAllBooksAsync();
+        Task<ApiResult<Book>> GetBookByIdAsync(Guid id);
+        Task<ApiResult<List<Book>>> SearchBooksAsync(string searchTerm);
+        Task<ApiResult> AddBookAsync(Book book);
+        Task<ApiResult> BorrowBookAsync(Guid id, string userName);
+        Task<ApiResult> ReturnBookAsync(Guid id);
+        Task<ApiResult> ReturnBorrowRecordAsync(Guid borrowRecordId);
+        Task<ApiResult<List<BorrowedBookInfo>>> GetBorrowedBooksAsync();
     }
 
     public class BookApiService : IBookApiService
@@ -26,9 +26,8 @@ namespace Scio.Services
             _httpClient = httpClient;
         }
 
-        public async Task<List<Book>> GetAllBooksAsync()
+        public async Task<ApiResult<List<Book>>> GetAllBooksAsync()
         {
-            Debug.WriteLine("Fetching all books from API...");
             try
             {
                 var response = await _httpClient.GetAsync(ApiBaseUrl);
@@ -37,122 +36,292 @@ namespace Scio.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<List<Book>>() ?? [];
+                    var books = await response.Content.ReadFromJsonAsync<List<Book>>() ?? [];
+                    return ApiResult<List<Book>>.SuccessResult(books);
                 }
-                return [];
+
+                return ApiResult<List<Book>>.FailureResult(
+                    $"API returned {response.StatusCode}: {response.ReasonPhrase}",
+                    ApiErrorType.HttpError);
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Network error in GetAllBooksAsync: {ex.Message}");
+                return ApiResult<List<Book>>.FailureResult(
+                    "Network error: Unable to reach the API service",
+                    ApiErrorType.NetworkError);
+            }
+            catch (TaskCanceledException ex)
+            {
+                Debug.WriteLine($"Timeout in GetAllBooksAsync: {ex.Message}");
+                return ApiResult<List<Book>>.FailureResult(
+                    "Request timeout: API service is not responding",
+                    ApiErrorType.Timeout);
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error in GetAllBooksAsync: {ex.Message}");
-                return [];
+                Debug.WriteLine($"Unexpected error in GetAllBooksAsync: {ex.Message}");
+                return ApiResult<List<Book>>.FailureResult(
+                    $"Unexpected error: {ex.Message}",
+                    ApiErrorType.ServerError);
             }
         }
 
-        public async Task<Book?> GetBookByIdAsync(Guid id)
+        public async Task<ApiResult<Book>> GetBookByIdAsync(Guid id)
         {
             try
             {
                 var response = await _httpClient.GetAsync($"{ApiBaseUrl}/{id}");
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<Book>();
+                    var book = await response.Content.ReadFromJsonAsync<Book>();
+                    return book != null
+                        ? ApiResult<Book>.SuccessResult(book)
+                        : ApiResult<Book>.FailureResult("Book not found", ApiErrorType.HttpError);
                 }
-                return null;
+
+                return ApiResult<Book>.FailureResult(
+                    $"API returned {response.StatusCode}",
+                    ApiErrorType.HttpError);
             }
-            catch
+            catch (HttpRequestException)
             {
-                return null;
+                return ApiResult<Book>.FailureResult(
+                    "Network error: Unable to reach the API service",
+                    ApiErrorType.NetworkError);
+            }
+            catch (TaskCanceledException)
+            {
+                return ApiResult<Book>.FailureResult(
+                    "Request timeout: API service is not responding",
+                    ApiErrorType.Timeout);
+            }
+            catch (Exception)
+            {
+                return ApiResult<Book>.FailureResult(
+                    "Unexpected error: Failed to fetch book",
+                    ApiErrorType.ServerError);
             }
         }
 
-        public async Task<List<Book>> SearchBooksAsync(string searchTerm)
+        public async Task<ApiResult<List<Book>>> SearchBooksAsync(string searchTerm)
         {
             try
             {
-                var response = await _httpClient.GetAsync($"{ApiBaseUrl}/search?term={Uri.EscapeDataString(searchTerm)}");
+                // Trim and encode search term for security
+                var cleanSearchTerm = (searchTerm ?? string.Empty).Trim();
+                var encodedTerm = Uri.EscapeDataString(cleanSearchTerm);
+                var response = await _httpClient.GetAsync($"{ApiBaseUrl}/search?searchTerm={encodedTerm}");
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<List<Book>>() ?? [];
+                    var books = await response.Content.ReadFromJsonAsync<List<Book>>() ?? [];
+                    return ApiResult<List<Book>>.SuccessResult(books);
                 }
-                return [];
+
+                return ApiResult<List<Book>>.FailureResult(
+                    $"API returned {response.StatusCode}",
+                    ApiErrorType.HttpError);
             }
-            catch
+            catch (HttpRequestException)
             {
-                return [];
+                return ApiResult<List<Book>>.FailureResult(
+                    "Network error: Unable to reach the API service",
+                    ApiErrorType.NetworkError);
+            }
+            catch (TaskCanceledException)
+            {
+                return ApiResult<List<Book>>.FailureResult(
+                    "Request timeout: API service is not responding",
+                    ApiErrorType.Timeout);
+            }
+            catch (Exception)
+            {
+                return ApiResult<List<Book>>.FailureResult(
+                    "Unexpected error: Failed to fetch books",
+                    ApiErrorType.ServerError);
             }
         }
 
-        public async Task<Book?> AddBookAsync(Book book)
+        public async Task<ApiResult> AddBookAsync(Book book)
         {
             try
             {
-                var response = await _httpClient.PostAsJsonAsync(ApiBaseUrl, book);
+                // Convert Book to AddBookRequest for validation on server
+                var request = new AddBookRequest
+                {
+                    Title = book.Title?.Trim() ?? string.Empty,
+                    Author = book.Author?.Trim() ?? string.Empty,
+                    YearOfPublication = book.YearOfPublication > 0 ? book.YearOfPublication.ToString() : null,
+                    ISBN = book.ISBN?.Trim() ?? string.Empty,
+                    TotalCopies = book.TotalCopies
+                };
+
+                var response = await _httpClient.PostAsJsonAsync(ApiBaseUrl, request);
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<Book>();
+                    return ApiResult.SuccessResult();
                 }
-                return null;
+
+                return ApiResult.FailureResult(
+                    $"API returned {response.StatusCode}: {response.ReasonPhrase}",
+                    ApiErrorType.HttpError);
             }
-            catch
+            catch (HttpRequestException)
             {
-                return null;
+                return ApiResult.FailureResult(
+                    "Network error: Unable to reach the API service",
+                    ApiErrorType.NetworkError);
+            }
+            catch (TaskCanceledException)
+            {
+                return ApiResult.FailureResult(
+                    "Request timeout: API service is not responding",
+                    ApiErrorType.Timeout);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailureResult(
+                    $"Unexpected error: {ex.Message}",
+                    ApiErrorType.ServerError);
             }
         }
 
-        public async Task<bool> BorrowBookAsync(Guid id, string userName)
+        public async Task<ApiResult> BorrowBookAsync(Guid id, string userName)
         {
             try
             {
-                var request = new { UserName = userName };
+                var request = new BorrowRequest { UserName = userName?.Trim() ?? string.Empty };
                 var response = await _httpClient.PostAsJsonAsync($"{ApiBaseUrl}/{id}/borrow", request);
-                return response.IsSuccessStatusCode;
+                if (response.IsSuccessStatusCode)
+                {
+                    return ApiResult.SuccessResult();
+                }
+
+                return ApiResult.FailureResult(
+                    $"API returned {response.StatusCode}: {response.ReasonPhrase}",
+                    ApiErrorType.HttpError);
             }
-            catch
+            catch (HttpRequestException)
             {
-                return false;
+                return ApiResult.FailureResult(
+                    "Network error: Unable to reach the API service",
+                    ApiErrorType.NetworkError);
+            }
+            catch (TaskCanceledException)
+            {
+                return ApiResult.FailureResult(
+                    "Request timeout: API service is not responding",
+                    ApiErrorType.Timeout);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailureResult(
+                    $"Unexpected error: {ex.Message}",
+                    ApiErrorType.ServerError);
             }
         }
 
-        public async Task<bool> ReturnBookAsync(Guid id)
+        public async Task<ApiResult> ReturnBookAsync(Guid id)
         {
             try
             {
                 var response = await _httpClient.PostAsync($"{ApiBaseUrl}/{id}/return", null);
-                return response.IsSuccessStatusCode;
+                if (response.IsSuccessStatusCode)
+                {
+                    return ApiResult.SuccessResult();
+                }
+
+                return ApiResult.FailureResult(
+                    $"API returned {response.StatusCode}: {response.ReasonPhrase}",
+                    ApiErrorType.HttpError);
             }
-            catch
+            catch (HttpRequestException)
             {
-                return false;
+                return ApiResult.FailureResult(
+                    "Network error: Unable to reach the API service",
+                    ApiErrorType.NetworkError);
+            }
+            catch (TaskCanceledException)
+            {
+                return ApiResult.FailureResult(
+                    "Request timeout: API service is not responding",
+                    ApiErrorType.Timeout);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailureResult(
+                    $"Unexpected error: {ex.Message}",
+                    ApiErrorType.ServerError);
             }
         }
 
-        public async Task<bool> ReturnBorrowRecordAsync(Guid borrowRecordId)
+        public async Task<ApiResult> ReturnBorrowRecordAsync(Guid borrowRecordId)
         {
             try
             {
                 var response = await _httpClient.PostAsync($"{ApiBaseUrl}/return-record/{borrowRecordId}", null);
-                return response.IsSuccessStatusCode;
+                if (response.IsSuccessStatusCode)
+                {
+                    return ApiResult.SuccessResult();
+                }
+
+                return ApiResult.FailureResult(
+                    $"API returned {response.StatusCode}: {response.ReasonPhrase}",
+                    ApiErrorType.HttpError);
             }
-            catch
+            catch (HttpRequestException)
             {
-                return false;
+                return ApiResult.FailureResult(
+                    "Network error: Unable to reach the API service",
+                    ApiErrorType.NetworkError);
+            }
+            catch (TaskCanceledException)
+            {
+                return ApiResult.FailureResult(
+                    "Request timeout: API service is not responding",
+                    ApiErrorType.Timeout);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult.FailureResult(
+                    $"Unexpected error: {ex.Message}",
+                    ApiErrorType.ServerError);
             }
         }
 
-        public async Task<List<BorrowedBookInfo>> GetBorrowedBooksAsync()
+        public async Task<ApiResult<List<BorrowedBookInfo>>> GetBorrowedBooksAsync()
         {
             try
             {
                 var response = await _httpClient.GetAsync($"{ApiBaseUrl}/borrowed");
                 if (response.IsSuccessStatusCode)
                 {
-                    return await response.Content.ReadFromJsonAsync<List<BorrowedBookInfo>>() ?? [];
+                    var books = await response.Content.ReadFromJsonAsync<List<BorrowedBookInfo>>() ?? [];
+                    return ApiResult<List<BorrowedBookInfo>>.SuccessResult(books);
                 }
-                return [];
+
+                return ApiResult<List<BorrowedBookInfo>>.FailureResult(
+                    $"API returned {response.StatusCode}",
+                    ApiErrorType.HttpError);
             }
-            catch
+            catch (HttpRequestException)
             {
-                return [];
+                return ApiResult<List<BorrowedBookInfo>>.FailureResult(
+                    "Network error: Unable to reach the API service",
+                    ApiErrorType.NetworkError);
+            }
+            catch (TaskCanceledException)
+            {
+                return ApiResult<List<BorrowedBookInfo>>.FailureResult(
+                    "Request timeout: API service is not responding",
+                    ApiErrorType.Timeout);
+            }
+            catch (Exception ex)
+            {
+                return ApiResult<List<BorrowedBookInfo>>.FailureResult(
+                    $"Unexpected error: {ex.Message}",
+                    ApiErrorType.ServerError);
             }
         }
     }

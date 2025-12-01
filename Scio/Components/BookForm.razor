@@ -1,0 +1,61 @@
+@using Scio.Models
+
+@if (IsVisible)
+{
+    <div class="bg-white rounded-lg shadow-md mb-6">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h5 class="text-xl font-bold">Add New Book</h5>
+        </div>
+        <div class="p-6">
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex-1">
+                    <div class="mb-4">
+                        <label class="form-label block text-sm font-semibold mb-2">Title *</label>
+                        <input type="text" @bind="Book.Title" class="border border-gray-300 rounded px-3 py-2 w-full" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label block text-sm font-semibold mb-2">Author *</label>
+                        <input type="text" @bind="Book.Author" class="border border-gray-300 rounded px-3 py-2 w-full" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label block text-sm font-semibold mb-2">Year of Publication</label>
+                        <input type="number" @bind="Book.YearOfPublication" class="border border-gray-300 rounded px-3 py-2 w-full" />
+                    </div>
+                </div>
+                <div class="flex-1">
+                    <div class="mb-4">
+                        <label class="form-label block text-sm font-semibold mb-2">ISBN *</label>
+                        <input type="text" @bind="Book.ISBN" class="border border-gray-300 rounded px-3 py-2 w-full" />
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label block text-sm font-semibold mb-2">Total Copies *</label>
+                        <input type="number" @bind="Book.TotalCopies" class="border border-gray-300 rounded px-3 py-2 w-full" min="1" />
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2 mt-6">
+                <button class="btn btn-success" @onclick="OnSave">Save Book</button>
+                <button class="btn btn-secondary" @onclick="OnCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool IsVisible { get; set; }
+
+    [Parameter]
+    public Book Book { get; set; } = new();
+
+    [Parameter]
+    public EventCallback OnSave { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+     private async Task HandleValidSubmit()
+    {
+        await OnSave.InvokeAsync();
+    }
+}
