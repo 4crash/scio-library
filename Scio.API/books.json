@@ -6,7 +6,7 @@
     "YearOfPublication": 1949,
     "ISBN": "978-0451524935",
     "TotalCopies": 12,
-    "AvailableCopies": 11,
+    "AvailableCopies": 12,
     "BorrowHistory": [
       {
         "Id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
@@ -145,8 +145,15 @@
         "Id": "9cfd4bc7-6116-46aa-82ce-14857bb2d14c",
         "User": "johny",
         "BorrowDate": "2025-12-01T11:26:43.6728369Z",
-        "ReturnDate": null,
-        "IsReturned": false
+        "ReturnDate": "2025-12-01T20:18:08.4078817Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "78059c67-d16c-4f52-9348-3947487d149c",
+        "User": "johny",
+        "BorrowDate": "2025-12-01T20:17:59.5408141Z",
+        "ReturnDate": "2025-12-01T20:18:03.9883251Z",
+        "IsReturned": true
       }
     ]
   },
@@ -157,7 +164,7 @@
     "YearOfPublication": 1960,
     "ISBN": "978-0061120084",
     "TotalCopies": 5,
-    "AvailableCopies": 4,
+    "AvailableCopies": 3,
     "BorrowHistory": [
       {
         "Id": "c3d4e5f6-a7b8-9012-cdef-345678901234",
@@ -205,6 +212,13 @@
         "Id": "b8533c65-4ae8-4caa-ab9a-196b6e8e0ca6",
         "User": "jan",
         "BorrowDate": "2025-12-01T10:59:19.680564Z",
+        "ReturnDate": null,
+        "IsReturned": false
+      },
+      {
+        "Id": "249b0546-8983-46b5-a120-24b784ccf75d",
+        "User": "test",
+        "BorrowDate": "2025-12-01T20:18:16.5590115Z",
         "ReturnDate": null,
         "IsReturned": false
       }
