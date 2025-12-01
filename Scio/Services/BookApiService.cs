@@ -19,7 +19,7 @@ namespace Scio.Services
     public class BookApiService : IBookApiService
     {
         private readonly HttpClient _httpClient;
-        private const string ApiBaseUrl = "http://localhost:5250/api/book";
+        private const string ApiBaseUrl = "https://localhost:7250/api/book";
 
         public BookApiService(HttpClient httpClient)
         {
