@@ -14,12 +14,14 @@ namespace Scio.API.Tests
     public class BookControllerTests
     {
         private readonly Mock<IBookService> _mockBookService;
+        private readonly Mock<IValidationService> _mockValidationService;
         private readonly BookController _controller;
 
         public BookControllerTests()
         {
             _mockBookService = new Mock<IBookService>();
-            _controller = new BookController(_mockBookService.Object);
+            _mockValidationService = new Mock<IValidationService>();
+            _controller = new BookController(_mockBookService.Object, _mockValidationService.Object);
         }
 
         #region GetAllBooks Tests
@@ -109,6 +111,10 @@ namespace Scio.API.Tests
                 new Book { Id = Guid.NewGuid(), Title = "Test Book 1", Author = "Author 1" },
                 new Book { Id = Guid.NewGuid(), Title = "Test Book 2", Author = "Author 2" }
             };
+
+            _mockValidationService.Setup(s => s.ValidateSearchRequest(It.IsAny<SearchRequest>()))
+                .Returns(new ValidationResult());
+
             _mockBookService.Setup(s => s.SearchBooksAsync(searchTerm)).ReturnsAsync(books);
 
             // Act
@@ -126,6 +132,10 @@ namespace Scio.API.Tests
         {
             // Arrange
             var books = new List<Book>();
+
+            _mockValidationService.Setup(s => s.ValidateSearchRequest(It.IsAny<SearchRequest>()))
+                .Returns(new ValidationResult());
+
             _mockBookService.Setup(s => s.SearchBooksAsync(It.IsAny<string>())).ReturnsAsync(books);
 
             // Act
@@ -148,7 +158,7 @@ namespace Scio.API.Tests
             {
                 Title = "New Book",
                 Author = "New Author",
-                ISBN = "123-456-789",
+                ISBN = "978-1234567890",
                 YearOfPublication = "2024",
                 TotalCopies = 5
             };
@@ -161,6 +171,11 @@ namespace Scio.API.Tests
                 YearOfPublication = 2024,
                 TotalCopies = 5
             };
+
+            // Mock valid validation result
+            _mockValidationService.Setup(s => s.ValidateAddBookRequest(It.IsAny<AddBookRequest>()))
+                .Returns(new ValidationResult());
+
             _mockBookService.Setup(s => s.AddBookAsync(It.IsAny<Book>())).ReturnsAsync(addedBook);
 
             // Act
@@ -175,6 +190,11 @@ namespace Scio.API.Tests
         [Fact]
         public async Task AddBook_WithNullRequest_ShouldReturnBadRequest()
         {
+            // Arrange
+            var validationResult = new ValidationResult("Book data is required");
+            _mockValidationService.Setup(s => s.ValidateAddBookRequest(It.IsAny<AddBookRequest>()))
+                .Returns(validationResult);
+
             // Act
             var result = await _controller.AddBook(null);
 
@@ -191,11 +211,15 @@ namespace Scio.API.Tests
             {
                 Title = "New Book",
                 Author = "New Author",
-                ISBN = "123-456-789",
+                ISBN = "978-1234567890",
                 YearOfPublication = "2024",
                 TotalCopies = 5
             };
             var addedBook = new Book { Id = Guid.NewGuid(), Title = "New Book" };
+
+            _mockValidationService.Setup(s => s.ValidateAddBookRequest(It.IsAny<AddBookRequest>()))
+                .Returns(new ValidationResult());
+
             _mockBookService.Setup(s => s.AddBookAsync(It.IsAny<Book>())).ReturnsAsync(addedBook);
 
             // Act
@@ -215,6 +239,10 @@ namespace Scio.API.Tests
             // Arrange
             var bookId = Guid.NewGuid();
             var request = new BorrowRequest { UserName = "John Doe" };
+
+            _mockValidationService.Setup(s => s.ValidateBorrowRequest(It.IsAny<BorrowRequest>()))
+                .Returns(new ValidationResult());
+
             _mockBookService.Setup(s => s.BorrowBookAsync(bookId, request.UserName.Trim())).ReturnsAsync(true);
 
             // Act
@@ -231,6 +259,10 @@ namespace Scio.API.Tests
             // Arrange
             var bookId = Guid.NewGuid();
             var request = new BorrowRequest { UserName = "John Doe" };
+
+            _mockValidationService.Setup(s => s.ValidateBorrowRequest(It.IsAny<BorrowRequest>()))
+                .Returns(new ValidationResult());
+
             _mockBookService.Setup(s => s.BorrowBookAsync(bookId, request.UserName.Trim())).ReturnsAsync(false);
 
             // Act
@@ -242,13 +274,18 @@ namespace Scio.API.Tests
         }
 
         [Fact]
-        public async Task BorrowBook_WithNullRequest_ShouldReturnBadRequest()
+        public async Task BorrowBook_WithInvalidRequest_ShouldReturnBadRequest()
         {
             // Arrange
             var bookId = Guid.NewGuid();
+            var request = new BorrowRequest { UserName = "" };
+            var validationResult = new ValidationResult("User name is required");
+
+            _mockValidationService.Setup(s => s.ValidateBorrowRequest(It.IsAny<BorrowRequest>()))
+                .Returns(validationResult);
 
             // Act
-            var result = await _controller.BorrowBook(bookId, null);
+            var result = await _controller.BorrowBook(bookId, request);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);

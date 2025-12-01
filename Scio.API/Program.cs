@@ -1,9 +1,11 @@
 using Scio.API.Services;
+using Scio.API.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<IValidationService, ValidationService>();
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
 {

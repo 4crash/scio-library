@@ -1,91 +1,159 @@
-# Scio Blazor Project - Running Frontend & Backend
+# Scio Library Management System
 
-## Architecture
+A modern library management system built with ASP.NET Core 9.0 and Blazor WebAssembly.
 
+## 🚀 Quick Start
+
+### Prerequisites
+- .NET 9.0 SDK
+- Node.js 18+ (for Tailwind CSS)
+
+### Running the Application
+
+**Start the Backend API:**
+```bash
+cd Scio.API
+dotnet run
 ```
-Frontend (Blazor WebAssembly)  ←→  Backend (ASP.NET Core API)
-- Scio (port 5173/7207)              - Scio.API (port 7095)
+API runs on: `https://localhost:7095`
+
+**Start the Frontend (Blazor):**
+```bash
+cd Scio
+dotnet run
 ```
+Frontend runs on: `https://localhost:7207`
 
-## Running the Application
-
-### Option 1: Run Both in Terminal Windows
-
-**Terminal 1 - Backend API:**
+### Development Mode (with auto-reload)
 ```bash
 cd Scio.API
 dotnet watch run
-```
-Backend runs on: `https://localhost:7095`
 
-**Terminal 2 - Frontend (Blazor WASM):**
-```bash
+# In another terminal:
 cd Scio
 dotnet watch run
 ```
-Frontend runs on: `https://localhost:7207` or `http://localhost:5173`
 
-### Option 2: Run from Solution
+## 📁 Project Structure
+
+```
+scio-library/
+├── Scio/                    # Blazor WebAssembly Frontend
+│   ├── Components/          # Razor components
+│   ├── Pages/               # Page components
+│   ├── Services/            # API services
+│   ├── Layout/              # Layout components
+│   └── wwwroot/             # Static assets
+│
+├── Scio.API/                # ASP.NET Core Backend API
+│   ├── Controllers/         # API endpoints
+│   ├── Services/            # Business logic
+│   ├── Models/              # Data models
+│   └── Properties/          # Launch settings
+│
+└── Scio.API.Tests/          # Unit tests (53 tests)
+```
+
+## ✨ Features
+
+### Books Management
+- 📖 View all books in the library
+- 🔍 Search books by title, author, or ISBN
+- ➕ Add new books to collection
+- 📚 Manage book copies and availability
+
+### Borrowing System
+- 🎫 Borrow books (when available)
+- 📝 Track borrow history
+- ✅ Return borrowed books
+- 📊 View all borrowed items
+
+### Security
+- ✅ HTTPS enforcement with HSTS
+- ✅ Comprehensive input validation
+- ✅ Security headers (CSP, X-Frame-Options, etc.)
+- ✅ Restrictive CORS policy
+- 🎨 Tailwind CSS for secure styling
+
+## 🧪 Testing
+
+Run all tests:
+```bash
+dotnet test Scio.API.Tests
+```
+
+Test coverage:
+- ✅ 33 service and controller tests
+- ✅ 20 input validation tests
+- ✅ 100% validation path coverage
+- **Total**: 53 tests passing
+
+## 📦 Tech Stack
+
+### Frontend
+- Blazor WebAssembly
+- Tailwind CSS
+- .NET 9.0
+
+### Backend
+- ASP.NET Core 9.0
+- Validation Service
+- JSON file storage
+
+### Testing
+- xUnit
+- Moq
+
+## 🔒 Security Status
+
+| Feature | Status |
+|---------|--------|
+| HTTPS | ✅ Enabled |
+| Security Headers | ✅ Configured |
+| CORS Policy | ✅ Restrictive |
+| Input Validation | ✅ Implemented |
+| Authentication | ⏳ Planned |
+| Audit Logging | ⏳ Planned |
+
+## 📊 Validation Rules
+
+**Adding Books:**
+- Title: 1-256 characters
+- Author: 1-256 characters
+- ISBN: Optional (ISBN-10/ISBN-13)
+- Year: 1000 to current year
+- Copies: 1-999
+
+**Borrowing Books:**
+- User name: 1-256 characters
+
+**Searching:**
+- Search term: Max 100 characters
+
+## 🛠️ Development Commands
 
 ```bash
-dotnet watch run --project Scio
-dotnet watch run --project Scio.API
+# Build the solution
+dotnet build
+
+# Run tests
+dotnet test
+
+# Build CSS
+npm run build-css
+
+# Watch CSS changes
+npm run watch-css
 ```
 
-## Project Structure
+## 📚 Documentation
 
-```
-blazor/
-├── Scio/                          # Blazor WebAssembly Frontend
-│   ├── Pages/
-│   │   ├── beer.razor            # UI Component (runs in browser)
-│   │   └── test.razor
-│   ├── Services/
-│   │   ├── BeerApiService.cs     # HTTP calls to backend API
-│   │   ├── TestApiService.cs
-│   │   └── TestService.cs        # Local service
-│   └── Program.cs                # Frontend configuration
-│
-├── Scio.API/                      # ASP.NET Core Backend API
-│   ├── Controllers/
-│   │   └── BeerController.cs      # API endpoints
-│   ├── Services/
-│   │   └── BeerService.cs        # Business logic (runs on SERVER)
-│   ├── Models/
-│   │   └── Brewery.cs            # Shared data model
-│   └── Program.cs                # Backend configuration
-│
-└── Scio.sln                       # Solution file
-```
+- `SECURITY_AUDIT.md` - Security analysis and remediation roadmap
+- `INPUT_VALIDATION.md` - Validation implementation details
+- `Scio.API.Tests/README.md` - Test documentation
 
-## Code Execution Flow
+---
 
-### When you click "+50" button in browser:
-
-1. **Frontend (Browser):** beer.razor calls `BeerApiService.UpdateBreweryStockAsync()`
-2. **HTTP Request:** Blazor sends POST to `https://localhost:7095/api/beer/stock/1`
-3. **Backend (Server):** BeerController receives request
-4. **Business Logic (Server):** `BeerService.UpdateBreweryStockAsync()` runs on server
-5. **Response:** Server returns HTTP 204 No Content
-6. **Frontend:** Refreshes data by calling GET `/api/beer`
-7. **UI Updates:** New stock value displays in browser
-
-## Key Differences
-
-| Location | Code | Runs Where | Notes |
-|----------|------|-----------|-------|
-| BeerService.cs | Business logic | **SERVER** | Core logic, data persistence |
-| BeerApiService.cs | HTTP calls | **BROWSER** | Calls the server API |
-| beer.razor | UI Component | **BROWSER** | User interaction |
-
-## Testing
-
-Navigate to: `https://localhost:7207/beer` (or the frontend port)
-
-Click buttons to update brewery stock. Changes persist on the server!
-
-## Common Issues
-
-- **Connection refused:** Make sure API is running on port 7095
-- **CORS errors:** Check Program.cs in Scio.API for CORS configuration
-- **Models not matching:** Keep Brewery.cs the same in both projects
+**Version**: 1.0  
+**Last Updated**: December 1, 2025  
+**Status**: ⏳ Pre-production

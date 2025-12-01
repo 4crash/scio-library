@@ -19,10 +19,12 @@ namespace Scio.API.Controllers
     public class BookController : ControllerBase
     {
         private readonly IBookService _bookService;
+        private readonly IValidationService _validationService;
 
-        public BookController(IBookService bookService)
+        public BookController(IBookService bookService, IValidationService validationService)
         {
             _bookService = bookService;
+            _validationService = validationService;
         }
 
         // GET /api/book - Get all books
@@ -47,8 +49,10 @@ namespace Scio.API.Controllers
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<Book>>> SearchBooks([FromQuery] SearchRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            // Validate request
+            var validation = _validationService.ValidateSearchRequest(request);
+            if (!validation.IsValid)
+                return BadRequest(validation.ErrorMessage);
 
             var searchTerm = string.IsNullOrWhiteSpace(request?.SearchTerm)
                 ? string.Empty
@@ -62,11 +66,10 @@ namespace Scio.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Book>> AddBook([FromBody] AddBookRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (request == null)
-                return BadRequest("Book data is required");
+            // Validate request
+            var validation = _validationService.ValidateAddBookRequest(request);
+            if (!validation.IsValid)
+                return BadRequest(validation.ErrorMessage);
 
             // Trim string inputs for security
             var yearOfPublication = 0;
@@ -80,7 +83,7 @@ namespace Scio.API.Controllers
                 Title = request.Title.Trim(),
                 Author = request.Author.Trim(),
                 YearOfPublication = yearOfPublication,
-                ISBN = request.ISBN.Trim(),
+                ISBN = request.ISBN?.Trim() ?? string.Empty,
                 TotalCopies = request.TotalCopies
             };
 
@@ -92,11 +95,10 @@ namespace Scio.API.Controllers
         [HttpPost("{id}/borrow")]
         public async Task<IActionResult> BorrowBook(Guid id, [FromBody] BorrowRequest request)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (request == null)
-                return BadRequest("Request data is required");
+            // Validate request
+            var validation = _validationService.ValidateBorrowRequest(request);
+            if (!validation.IsValid)
+                return BadRequest(validation.ErrorMessage);
 
             var success = await _bookService.BorrowBookAsync(id, request.UserName.Trim());
             if (!success)
