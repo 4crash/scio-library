@@ -15,7 +15,7 @@
                     <text>Return: @FilteredBooks?.FirstOrDefault()?.BookTitle</text>
                 }
             </h3>
-            
+
             @if (FilteredBooks == null || !FilteredBooks.Any())
             {
                 <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-blue-800">
@@ -32,17 +32,18 @@
                                 <div class="flex-1">
                                     @if (FilterBookId == Guid.Empty)
                                     {
-                                        <h5 class="font-semibold text-gray-900">@borrowedBook.BookTitle</h5>
-                                        <p class="text-sm text-gray-600">by @borrowedBook.BookAuthor</p>
+                                        <h5 class="font-semibold text-gray-900">@borrowedBook?.BookTitle</h5>
+                                        <p class="text-sm text-gray-600">by @borrowedBook?.BookAuthor</p>
                                     }
-                                    <p class="text-sm text-gray-600">Borrowed by: <span class="font-medium">@borrowedBook.UserName</span></p>
-                                    <p class="text-xs text-gray-500">Borrowed on: @borrowedBook.BorrowDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</p>
+                                    <p class="text-sm text-gray-600">Borrowed by: <span
+                                            class="font-medium">@borrowedBook?.UserName</span></p>
+                                    <p class="text-xs text-gray-500">Borrowed on:
+                                        @borrowedBook?.BorrowDate.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</p>
                                 </div>
-                                <button 
-                                    class="btn btn-success"
-                                    @onclick="@(() => ReturnSelectedBook(borrowedBook.BorrowRecordId))"
-                                    disabled="@(IsSubmitting && SelectedBorrowRecordId == borrowedBook.BorrowRecordId)">
-                                    @if (IsSubmitting && SelectedBorrowRecordId == borrowedBook.BorrowRecordId)
+                                <button class="btn btn-success"
+                                    @onclick="@(() => ReturnSelectedBook(borrowedBook?.BorrowRecordId ?? Guid.Empty))"
+                                    disabled="@(IsSubmitting && SelectedBorrowRecordId == borrowedBook?.BorrowRecordId)">
+                                    @if (IsSubmitting && SelectedBorrowRecordId == borrowedBook?.BorrowRecordId)
                                     {
                                         <span>Returning...</span>
                                     }
@@ -82,7 +83,7 @@
 
     private Guid SelectedBorrowRecordId { get; set; }
     private bool IsSubmitting { get; set; }
-    private List<BorrowedBookInfo>? FilteredBooks { get; set; }
+    private List<BorrowedBookInfo?>? FilteredBooks { get; set; }
 
     public async Task Open(List<BorrowedBookInfo?> borrowedBooks, Guid? filterBookId = null)
     {
@@ -120,7 +121,7 @@
         }
         else
         {
-            FilteredBooks = BorrowedBooks.Where(b => b.BookId == FilterBookId).ToList();
+            FilteredBooks = BorrowedBooks.Where(b => b?.BookId == FilterBookId).ToList();
         }
     }
 

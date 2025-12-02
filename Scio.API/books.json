@@ -154,6 +154,20 @@
         "BorrowDate": "2025-12-01T20:17:59.5408141Z",
         "ReturnDate": "2025-12-01T20:18:03.9883251Z",
         "IsReturned": true
+      },
+      {
+        "Id": "ce46f31a-0d2e-4a50-a7f0-aab3c5530703",
+        "User": "test",
+        "BorrowDate": "2025-12-01T21:48:08.6288838Z",
+        "ReturnDate": "2025-12-01T21:48:15.8044658Z",
+        "IsReturned": true
+      },
+      {
+        "Id": "d285a960-457d-46e8-8404-3b92d3aa1eca",
+        "User": "tomas",
+        "BorrowDate": "2025-12-02T06:28:35.466077Z",
+        "ReturnDate": "2025-12-02T06:28:40.5122231Z",
+        "IsReturned": true
       }
     ]
   },
