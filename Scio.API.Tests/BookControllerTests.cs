@@ -139,7 +139,7 @@ namespace Scio.API.Tests
             _mockBookService.Setup(s => s.SearchBooksAsync(It.IsAny<string>())).ReturnsAsync(books);
 
             // Act
-            var result = await _controller.SearchBooks(null);
+            var result = await _controller.SearchBooks(null!);
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result.Result);
@@ -184,7 +184,7 @@ namespace Scio.API.Tests
             // Assert
             var createdResult = Assert.IsType<CreatedAtActionResult>(result.Result);
             Assert.Equal(nameof(BookController.GetBookById), createdResult.ActionName);
-            Assert.Equal(addedBook.Id, ((Book)createdResult.Value).Id);
+            Assert.Equal(addedBook.Id, ((Book?)createdResult?.Value)?.Id);
         }
 
         [Fact]
@@ -196,7 +196,7 @@ namespace Scio.API.Tests
                 .Returns(validationResult);
 
             // Act
-            var result = await _controller.AddBook(null);
+            var result = await _controller.AddBook(null!);
 
             // Assert
             var badRequestResult = Assert.IsType<BadRequestObjectResult>(result.Result);

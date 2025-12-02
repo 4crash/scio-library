@@ -38,7 +38,7 @@ namespace Scio.API.Tests
         public void ValidateAddBookRequest_WithNullRequest_ShouldFail()
         {
             // Act
-            var result = _validationService.ValidateAddBookRequest(null);
+            var result = _validationService.ValidateAddBookRequest(null!);
 
             // Assert
             Assert.False(result.IsValid);
@@ -258,7 +258,7 @@ namespace Scio.API.Tests
         public void ValidateBorrowRequest_WithNullRequest_ShouldFail()
         {
             // Act
-            var result = _validationService.ValidateBorrowRequest(null);
+            var result = _validationService.ValidateBorrowRequest(null!);
 
             // Assert
             Assert.False(result.IsValid);
@@ -311,7 +311,7 @@ namespace Scio.API.Tests
         public void ValidateSearchRequest_WithNullRequest_ShouldSucceed()
         {
             // Act
-            var result = _validationService.ValidateSearchRequest(null);
+            var result = _validationService.ValidateSearchRequest(null!);
 
             // Assert
             Assert.True(result.IsValid);
